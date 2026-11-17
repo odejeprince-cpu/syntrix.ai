@@ -19,8 +19,23 @@
       border-bottom: 1px solid #232633;
       font-weight: 600;
       font-size: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     header span { color: #7c8cff; }
+    #modeSelect {
+      background: #1c1f2b;
+      color: #e6e8ee;
+      border: 1px solid #2a2e3d;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    #modeSelect:focus { border-color: #7c8cff; }
     #messages {
       flex: 1;
       overflow-y: auto;
@@ -78,10 +93,18 @@
   </style>
 </head>
 <body>
-  <header>Syntrix <span>AI</span></header>
+  <header>
+    <div>Syntrix <span>AI</span></div>
+    <select id="modeSelect">
+      <option value="code">💻 Programming</option>
+      <option value="auto">🚗 Automotive</option>
+    </select>
+  </header>
+
   <div id="messages">
     <div class="msg bot">Hi! I'm Syntrix. Ask me anything about code or automotive engineering.</div>
   </div>
+
   <form id="chatForm">
     <input id="input" type="text" placeholder="Ask Syntrix anything..." autocomplete="off" />
     <button type="submit">Send</button>
@@ -91,6 +114,7 @@
     const form = document.getElementById("chatForm");
     const input = document.getElementById("input");
     const messages = document.getElementById("messages");
+    const modeSelect = document.getElementById("modeSelect");
 
     function addMessage(text, who) {
       const div = document.createElement("div");
@@ -104,16 +128,37 @@
       e.preventDefault();
       const text = input.value.trim();
       if (!text) return;
+      
       addMessage(text, "user");
       input.value = "";
 
-      const res = await fetch("/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text }),
-      });
-      const data = await res.json();
-      addMessage(data.reply, "bot");
+      // Add a temporary "Thinking..." bubble
+      const thinkingBubble = document.createElement("div");
+      thinkingBubble.className = "msg bot";
+      thinkingBubble.textContent = "Syntrix is thinking...";
+      messages.appendChild(thinkingBubble);
+      messages.scrollTop = messages.scrollHeight;
+
+      try {
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            message: text,
+            mode: modeSelect.value 
+          }),
+        });
+        
+        const data = await res.json();
+        
+        // Remove the "Thinking..." bubble
+        thinkingBubble.remove();
+        
+        addMessage(data.reply, "bot");
+      } catch (err) {
+        thinkingBubble.remove();
+        addMessage("⚠️ Network error. Is the server running?", "bot");
+      }
     });
   </script>
 </body>
