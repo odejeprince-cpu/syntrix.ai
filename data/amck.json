@@ -1,0 +1,374 @@
+[
+  {
+    "question": "What are the major parts of a car engine?",
+    "answer": "The main parts are: engine block, cylinder head, pistons, connecting rods, crankshaft, camshaft, valves, spark plugs, fuel injectors, intake manifold, exhaust manifold, timing belt/chain, oil pump, water pump, and flywheel. Each plays a role in converting fuel into rotational motion."
+  },
+  {
+    "question": "What does a spark plug do?",
+    "answer": "A spark plug ignites the air-fuel mixture inside the combustion chamber. It receives high voltage from the ignition coil and produces a spark at the precise moment in the compression stroke, causing combustion that drives the piston down."
+  },
+  {
+    "question": "How do I diagnose a P0300 code?",
+    "answer": "P0300 means random or multiple cylinder misfires. Check in this order: 1) Spark plugs and ignition coils, 2) Fuel injectors and fuel pressure, 3) Vacuum leaks (intake manifold gaskets, hoses), 4) Compression test on all cylinders, 5) EGR valve, 6) Crankshaft/camshaft position sensors. Start with the cheapest items (plugs) and work up."
+  },
+  {
+    "question": "What is a timing belt and when should it be replaced?",
+    "answer": "A timing belt synchronizes the crankshaft and camshaft so valves open and close at the correct time. Most manufacturers recommend replacement every 60,000-100,000 miles or every 5-7 years. If it snaps, valves can hit pistons (interference engine), causing catastrophic damage. Replace proactively."
+  },
+  {
+    "question": "What are symptoms of a failing alternator?",
+    "answer": "Symptoms: dimming headlights at idle, battery warning light on, slow-cranking engine, electrical accessories working poorly, burning smell from the alternator, squealing belt, and battery dying repeatedly. Test with a multimeter: with the engine running, the battery should read 13.8-14.5V. Below 13V means the alternator isn't charging."
+  },
+  {
+    "question": "How do I check transmission fluid?",
+    "answer": "With the engine warm and running (in Park or Neutral), pull the transmission dipstick (if equipped), wipe it clean, reinsert fully, and pull again. The fluid should be reddish-pink and smell slightly sweet. Dark brown or burnt smell = fluid needs replacement. Some modern cars have sealed transmissions with no dipstick. Check the owner's manual."
+  },
+  {
+    "question": "What causes brake pedal to feel spongy?",
+    "answer": "A spongy brake pedal usually means air in the brake lines. Other causes: low brake fluid (check for leaks), a failing master cylinder, a leaking brake caliper or wheel cylinder, or old fluid with absorbed moisture. Fix: bleed the brake system and replace fluid. If it persists, inspect the master cylinder."
+  },
+  {
+    "question": "What is the difference between disc and drum brakes?",
+    "answer": "Disc brakes use a caliper squeezing brake pads against a rotating disc (rotor). They dissipate heat better, perform better in wet conditions, and are easier to inspect. Drum brakes use brake shoes pressing outward against a rotating drum. Most modern cars use discs front and drums rear."
+  },
+  {
+    "question": "How often should I change engine oil?",
+    "answer": "Follow the owner's manual. Conventional oil: every 5,000-7,500 miles. Full synthetic: every 7,500-10,000 miles. Severe driving: change more often. Modern synthetic oils last longer than old 3,000-mile advice. Don't exceed 12 months regardless of mileage."
+  },
+  {
+    "question": "What does a catalytic converter do?",
+    "answer": "The catalytic converter converts harmful exhaust gases (carbon monoxide, hydrocarbons, nitrogen oxides) into less harmful gases (CO2, water vapor, nitrogen) using a catalyst (platinum, palladium, rhodium). Symptoms of failure: check engine light (P0420), rotten egg smell, reduced power, failed emissions test."
+  },
+  {
+    "question": "What causes a car to overheat?",
+    "answer": "Common causes: low coolant (leak), failed thermostat (stuck closed), bad water pump, clogged radiator, broken radiator fan, blown head gasket, or a faulty temperature sensor. Pull over immediately if the gauge is in the red. Overheating can warp the head and destroy the engine."
+  },
+  {
+    "question": "How do I jump-start a car?",
+    "answer": "1) Park the working car next to the dead one. 2) Connect RED (+) cable to the dead battery positive, then to the good battery positive. 3) Connect BLACK (-) cable to the good battery negative, then to an unpainted metal bolt on the dead car. 4) Start the good car, then the dead car. 5) Remove cables in reverse order. Run the revived car for 20+ minutes to recharge."
+  },
+  {
+    "question": "What is turbo lag?",
+    "answer": "Turbo lag is the delay between pressing the accelerator and the turbocharger producing boost. The exhaust gas needs time to spin up the turbine. Modern fixes: smaller turbos, twin-scroll turbos, variable-geometry turbos, electric turbos, and twin-turbo setups. It's most noticeable in older large-turbo cars."
+  },
+  {
+    "question": "What is an OBD-II scanner used for?",
+    "answer": "An OBD-II scanner plugs into the diagnostic port (usually under the dashboard) and reads error codes (P, B, C, U codes) from the car's ECU. It helps identify engine misfires, emissions issues, sensor failures, transmission faults, ABS/airbag problems, and more. Advanced scanners show live data and freeze-frame data."
+  },
+  {
+    "question": "What is the firing order and why does it matter?",
+    "answer": "Firing order is the sequence in which cylinders ignite (e.g., 1-3-4-2 for many 4-cylinders, 1-8-4-3-6-5-7-2 for V8s). It matters because it balances the load on the crankshaft, reduces vibration, prevents cross-firing, and ensures smooth power delivery. Getting plug wires crossed causes rough running and a check engine light."
+  },
+  {
+    "question": "What does a blown head gasket look like?",
+    "answer": "Symptoms: white smoke from exhaust, milky oil, bubbles in the radiator, overheating, sweet smell from exhaust, low coolant with no visible leak. A compression or leak-down test confirms it. Repair is expensive ($1,500-$3,000+) because the head must be removed."
+  },
+  {
+    "question": "How do I test a car battery?",
+    "answer": "Use a multimeter: engine off, the battery should read 12.6V (fully charged). Below 12.4V needs charging. Below 12V is likely failing. With engine running, should read 13.8-14.5V (alternator charging). A load test at an auto parts store is more reliable."
+  },
+  {
+    "question": "What causes a car to shake when braking?",
+    "answer": "Shaking while braking usually means warped brake rotors or uneven pad deposits. Other causes: worn suspension components, unbalanced tires, or a stuck brake caliper. Fix: machine or replace rotors, replace pads, and inspect suspension."
+  },
+  {
+    "question": "What is the difference between AWD and 4WD?",
+    "answer": "AWD sends power to all four wheels automatically when needed, designed for on-road traction. 4WD is driver-selectable and locks front and rear axles together, designed for serious off-road. AWD is always on; 4WD should not be used on dry pavement in 4-Hi/4-Lo."
+  },
+  {
+    "question": "What is a mass airflow sensor (MAF) and what happens when it fails?",
+    "answer": "The MAF sensor measures how much air enters the engine so the ECU can calculate the correct fuel amount. Symptoms of failure: rough idle, hesitation, stalling, poor fuel economy, black smoke, check engine light (P0100-P0104). Clean with MAF cleaner."
+  },
+  {
+    "question": "What is the purpose of the transmission?",
+    "answer": "The transmission converts engine speed and torque into usable power at the wheels. It allows the engine to operate at optimal RPM regardless of vehicle speed. Manual transmissions use a clutch and gears; automatics use a torque converter and planetary gearsets or belts (CVT)."
+  },
+  {
+    "question": "How do I bleed brakes?",
+    "answer": "Order: start at the wheel farthest from the master cylinder. For each wheel: 1) Attach a clear hose to the bleeder screw, submerge the other end in brake fluid. 2) Have a helper pump the pedal 3-5 times and hold it down. 3) Open the bleeder screw (fluid and air come out). 4) Close it. 5) Repeat until no bubbles. 6) Keep the reservoir topped up."
+  },
+  {
+    "question": "What causes a check engine light to come on?",
+    "answer": "Most common causes: loose gas cap, O2 sensor failure, catalytic converter efficiency below threshold, misfire, EVAP leak, MAF sensor, or vacuum leak. Read the code with an OBD-II scanner. A flashing check engine light means active misfire, stop driving immediately."
+  },
+  {
+    "question": "What is a CVT transmission?",
+    "answer": "CVT uses a belt and two variable-diameter pulleys to provide infinite gear ratios. Benefits: smoother acceleration, better fuel economy. Downsides: less engaging feel, limited torque capacity. Common in economy cars (Nissan, Subaru, Honda, Toyota hybrids)."
+  },
+  {
+    "question": "How do I check power steering fluid?",
+    "answer": "Locate the reservoir (usually near the firewall). Check the level against hot/cold marks. Fluid should be clear/reddish. Dark or burnt-smelling fluid needs replacement. Low level means a leak. Electric power steering (EPS) has no fluid."
+  },
+  {
+    "question": "What is engine knock and what causes it?",
+    "answer": "Engine knock (detonation) is premature ignition of the air-fuel mixture before the spark plug fires, causing a pinging sound. Causes: low-octane fuel, overly advanced ignition timing, carbon buildup, lean mixture, overheating, or a faulty knock sensor. Severe knock can destroy pistons."
+  },
+  {
+    "question": "What is a DPF (Diesel Particulate Filter)?",
+    "answer": "The DPF traps soot from diesel exhaust. It regenerates (burns off soot) periodically, either passively at highway speeds or actively via fuel injection into the exhaust. Symptoms of a clogged DPF: reduced power, limp mode, DPF warning light. Drive at highway speed for 20-30 minutes for passive regen."
+  },
+  {
+    "question": "How do I replace brake pads?",
+    "answer": "1) Loosen lug nuts, jack up the car, secure with jack stands. 2) Remove the wheel. 3) Unbolt the caliper and hang it with a bungee. 4) Remove old pads. 5) Compress the piston with a C-clamp (open the bleeder screw). 6) Install new pads with brake grease. 7) Reinstall the caliper. 8) Pump the brake pedal until firm. 9) Bed the brakes: 5-10 moderate stops from 30 mph, then 3-5 harder stops from 50 mph."
+  },
+  {
+    "question": "What is the difference between a supercharger and a turbocharger?",
+    "answer": "Both force more air into the engine. A supercharger is driven by a belt from the crankshaft, instant power, no lag, but it robs some engine power. A turbocharger is driven by exhaust gas, free power, but has turbo lag. Superchargers are common in muscle cars; turbos are common in modern performance and economy cars."
+  },
+  {
+    "question": "What is a wheel alignment and when do I need one?",
+    "answer": "A wheel alignment adjusts camber, caster, and toe to manufacturer specs. Signs you need one: car pulls to one side, uneven tire wear, steering wheel off-center, or after hitting a curb. Recommended every 12,000-15,000 miles or when tires are replaced."
+  },
+  {
+    "question": "What causes a car to idle rough?",
+    "answer": "Common causes: dirty/failed MAF sensor, vacuum leaks, dirty throttle body, worn spark plugs, bad ignition coils, fuel injector issues, low fuel pressure, faulty IAC valve, or EGR valve stuck open. Start with the cheapest fixes: clean the MAF and throttle body, check for vacuum leaks."
+  },
+  {
+    "question": "What is the purpose of a differential?",
+    "answer": "The differential allows the wheels to rotate at different speeds when turning. Without it, tires would scrub and the drivetrain would bind. It also redirects power from the driveshaft to the axle shafts. Limited-slip differentials (LSDs) improve traction by limiting how much one wheel can spin."
+  },
+  {
+    "question": "What is a cold air intake?",
+    "answer": "A cold air intake replaces the factory air box with a less restrictive intake that draws cooler air. Cooler air is denser, more oxygen, potential power gains (5-15 hp on most cars) and better sound. Downsides: minimal real-world gains on modern cars, possible water ingestion in floods."
+  },
+  {
+    "question": "How do I know if my clutch is going bad?",
+    "answer": "Symptoms: soft or sticking pedal, slipping (RPM rises but car doesn't accelerate), grinding when shifting, burning smell, chatter/vibration. Test: in 4th gear at low speed, floor the accelerator. If RPMs rise without speed increasing, the clutch is slipping. Average clutch life: 60,000-100,000 miles."
+  },
+  {
+    "question": "What is the purpose of the radiator?",
+    "answer": "The radiator removes heat from the engine coolant. Hot coolant flows through the radiator's thin tubes, where airflow dissipates heat into the atmosphere. Cooled coolant returns to the engine. A failing radiator causes overheating. Common issues: leaks, clogged tubes, cracked plastic end tanks."
+  },
+  {
+    "question": "What does the O2 sensor do?",
+    "answer": "The oxygen sensor measures oxygen content in the exhaust and reports to the ECU, which adjusts fuel mixture for optimal combustion. Upstream O2 sensors control fuel trim; downstream ones monitor converter efficiency. Symptoms of failure: poor fuel economy, rough idle, check engine light (P0130-P0167)."
+  },
+  {
+    "question": "What is the difference between DOT 3, DOT 4, and DOT 5 brake fluid?",
+    "answer": "DOT 3: glycol-based, dry boiling 205C. Common in passenger cars. DOT 4: glycol-based, dry 230C, higher performance. DOT 5: silicone-based, dry 260C. NOT compatible with DOT 3/4. DOT 5.1: glycol-based, dry 260C, compatible with DOT 3/4 and best for performance cars. Never mix glycol and silicone fluids."
+  },
+  {
+    "question": "What causes a car to lose coolant but no visible leak?",
+    "answer": "Possible causes: 1) Head gasket failure (coolant burns, white smoke). 2) Internal leak into oil (milky oil). 3) Failing heater core (sweet smell in cabin, wet passenger floor). 4) Very slow external leak (check the water pump weep hole). 5) Faulty radiator cap. Pressure-test the cooling system to find internal or slow leaks."
+  },
+  {
+    "question": "What is an ECU (Engine Control Unit)?",
+    "answer": "The ECU is the computer that controls the engine. It reads inputs from sensors and outputs commands to actuators (fuel injectors, ignition coils, throttle body). It also stores diagnostic trouble codes (DTCs). Modern vehicles have multiple ECUs communicating over CAN bus."
+  },
+  {
+    "question": "How do I check if my car's suspension is bad?",
+    "answer": "Bounce test: push down hard on each corner and release. The car should settle within 1-2 bounces. Other signs: excessive body roll, nose dive under braking, uneven tire wear, clunking over bumps, leaking fluid on struts, bouncy ride at highway speeds."
+  },
+  {
+    "question": "What is a fuel injector and how does it work?",
+    "answer": "A fuel injector is an electronically controlled valve that sprays a precise amount of fuel into the intake port or directly into the cylinder. The ECU pulses the injector open for a specific duration to control fuel delivery. Symptoms of clogged injectors: rough idle, misfires, poor economy, hesitation."
+  },
+  {
+    "question": "What causes a car to pull to one side?",
+    "answer": "Common causes: uneven tire pressure (check first!), wheel alignment off, dragging brake caliper, worn suspension components, worn steering components, or a bad tire. Diagnose with a test drive and visual inspection; get an alignment after fixing the root cause."
+  },
+  {
+    "question": "What is a recall and how do I check if my car has one?",
+    "answer": "A recall is a manufacturer-issued notice that a vehicle has a safety defect and needs free repair. Check recalls at NHTSA.gov (US) using your VIN. Recalls are FREE to fix at any authorized dealer, even out of warranty."
+  },
+  {
+    "question": "What is engine displacement?",
+    "answer": "Engine displacement is the total volume swept by all pistons in one complete cycle, measured in liters (L) or cubic centimeters (cc). A 2.0L 4-cylinder has four cylinders each displacing 500cc. Larger displacement = more potential power but usually worse fuel economy. Modern cars use small displacement + turbocharging."
+  },
+  {
+    "question": "What is the purpose of an exhaust system?",
+    "answer": "The exhaust system: 1) Routes gases away from the cabin. 2) Reduces noise (muffler). 3) Reduces emissions (catalytic converter). 4) Improves engine efficiency. Components: exhaust manifold, downpipe, catalytic converter, resonator, muffler, tailpipe."
+  },
+  {
+    "question": "What causes a car to stall at idle?",
+    "answer": "Common causes: dirty MAF sensor, throttle body carbon buildup, vacuum leaks, faulty IAC valve, failing fuel pump, clogged fuel filter, bad ignition coil, or EGR valve stuck open. Start with cleaning throttle body and MAF, check for vacuum leaks."
+  },
+  {
+    "question": "What is a hybrid car and how does it work?",
+    "answer": "A hybrid combines a gasoline engine with an electric motor and battery. Types: mild hybrid (48V assist), full hybrid (can drive on electric alone at low speeds), plug-in hybrid (PHEV, larger battery, 20-50 miles electric range). Hybrids recover braking energy via regenerative braking."
+  },
+  {
+    "question": "How do I change a flat tire?",
+    "answer": "1) Pull over safely, turn on hazards. 2) Apply parking brake. 3) Loosen lug nuts slightly BEFORE jacking. 4) Place jack at designated jack point. 5) Raise the car. 6) Remove lug nuts and the flat tire. 7) Mount the spare, hand-tighten nuts in a star pattern. 8) Lower the car. 9) Torque the nuts to spec. 10) Check the spare's air pressure."
+  },
+  {
+    "question": "What is a TPMS sensor?",
+    "answer": "TPMS warns when tire pressure is low. Two types: direct (pressure sensors in each wheel valve stem) and indirect (uses ABS wheel speed sensors). Direct TPMS sensors have batteries that last 5-10 years. Dashboard light stays on if: low pressure, sensor battery dead, or sensor not paired after a tire rotation."
+  },
+  {
+    "question": "What causes a car to consume too much fuel?",
+    "answer": "Common causes: low tire pressure, dirty air filter, dirty MAF sensor, worn spark plugs, faulty O2 sensor, stuck thermostat, dragging brakes, low transmission fluid, aggressive driving, AC use, extra weight. Start with a tune-up and check tire pressure."
+  },
+  {
+    "question": "What is the difference between torque and horsepower?",
+    "answer": "Horsepower measures how fast work is done (power = torque x RPM / 5252). Torque is the rotational force, the engine's twisting force. High-torque engines (diesel, big V8) accelerate strongly from low RPM and tow well. High-horsepower engines produce more top-end power. For towing: torque matters. For top speed: horsepower matters."
+  },
+  {
+    "question": "What causes a P0171 code?",
+    "answer": "P0171 means system too lean (bank 1). Common causes: vacuum leak (intake manifold, hoses, PCV), dirty/failing MAF sensor, weak fuel pump, clogged fuel filter, faulty O2 sensor, leaking fuel injector O-rings, or exhaust leak before the O2 sensor. Start by checking for vacuum leaks with carb cleaner (spray around intake, if idle changes, you found it) and clean the MAF."
+  },
+  {
+    "question": "What causes a P0420 code?",
+    "answer": "P0420 means catalyst system efficiency below threshold (bank 1). Causes: aging/failed catalytic converter, downstream O2 sensor failure, exhaust leak between the engine and the rear O2 sensor, or an engine running rich/oil-burning for a long time (which poisons the cat). First check the O2 sensor output, look for exhaust leaks, and verify the engine isn't misfiring. If all else is fine, the cat is likely due for replacement."
+  },
+  {
+    "question": "What is a P0442 code?",
+    "answer": "P0442 means a small EVAP system leak detected. The EVAP system captures fuel vapors. A small leak is usually the gas cap (loose, missing, or with a bad seal), or a cracked rubber hose in the EVAP system, or a faulty purge/vent valve. Tighten the gas cap, clear the code, and drive 2-3 drive cycles. If it returns, smoke test the EVAP system."
+  },
+  {
+    "question": "What causes a P0301 code?",
+    "answer": "P0301 means cylinder 1 misfire. Diagnose by swapping parts: 1) Swap cylinder 1 spark plug with another cylinder, if misfire moves, plug is bad. 2) Swap the ignition coil, if it moves, coil is bad. 3) If misfire stays on cylinder 1, check fuel injector (swap with another cylinder too), then compression (a compression test will show if the cylinder is low, indicating valve or ring issues)."
+  },
+  {
+    "question": "What is the difference between a misfire and a backfire?",
+    "answer": "A misfire is a failure of combustion in a cylinder (no ignition, no power). A backfire is combustion happening at the wrong time, either in the intake (intake backfire) or exhaust (exhaust backfire). Misfires cause rough running, check engine light, and unburned fuel in the exhaust. Backfires are usually caused by timing problems, lean/rich conditions, or valve issues."
+  },
+  {
+    "question": "What is the purpose of a PCV valve?",
+    "answer": "The PCV (Positive Crankcase Ventilation) valve recirculates blowby gases from the crankcase back into the intake to be burned. This reduces emissions and prevents crankcase pressure buildup. A stuck-open PCV valve causes rough idle; a stuck-closed one causes oil leaks, sludge buildup, and pressure-related seal failures. Check by removing it and shaking, it should rattle."
+  },
+  {
+    "question": "What is a MAP sensor?",
+    "answer": "The MAP (Manifold Absolute Pressure) sensor measures the pressure inside the intake manifold. Combined with intake air temperature, the ECU calculates airflow into the engine. Symptoms of failure: rough idle, poor fuel economy, hesitation, stalling, black smoke, check engine light (P0105-P0109). Located on the intake manifold or firewall."
+  },
+  {
+    "question": "What is a knock sensor?",
+    "answer": "The knock sensor detects engine knock (premature detonation) via a piezo-electric element mounted on the engine block. It sends a signal to the ECU, which retards ignition timing to prevent damage. Symptoms of failure: reduced power, poor fuel economy, check engine light (P0325-P0332), and audible knocking under load."
+  },
+  {
+    "question": "What is a crankshaft position sensor?",
+    "answer": "The crankshaft position sensor (CKP) tells the ECU the exact position and speed of the crankshaft. Without it, the ECU doesn't know when to fire the spark or inject fuel. Symptoms of failure: engine won't start, stalls intermittently, rough running, or a check engine light (P0335-P0339). Often fails when hot and works when cooled (a classic intermittent stall)."
+  },
+  {
+    "question": "What causes a car to not start?",
+    "answer": "No-start diagnosis: 1) Check battery, 12.6V is healthy. 2) Listen for starter click. 3) Check for fuel (fuel pump hum). 4) Check for spark. 5) Check immobilizer. 6) Check for security system lockout. Always start with the battery and work backwards."
+  },
+  {
+    "question": "What is blow-by and why does it matter?",
+    "answer": "Blow-by is combustion gas escaping past the piston rings into the crankcase. Excessive blow-by indicates worn rings or cylinder walls. Test: remove the oil cap with the engine running, if there's a strong puffing stream of air, rings are worn. Symptoms: oil in the intake, oil consumption, blue smoke from exhaust, and low compression."
+  },
+  {
+    "question": "What is hydraulic lifter tick?",
+    "answer": "A hydraulic lifter tick is a rhythmic tapping noise from the top of the engine, especially at cold start. Hydraulic lifters use oil pressure to maintain valve clearance. If oil isn't reaching them, they tick. Causes: old/dirty oil, low oil pressure, worn lifters, or a clogged oil passage."
+  },
+  {
+    "question": "What is a timing chain vs timing belt?",
+    "answer": "A timing belt is rubber and needs replacement every 60,000-100,000 miles. A timing chain is metal and typically lasts the life of the engine, but can stretch if oil changes are neglected. If a chain or belt fails, it's catastrophic on interference engines, valves hit pistons."
+  },
+  {
+    "question": "What is a variable valve timing (VVT) system?",
+    "answer": "VVT changes when valves open and close based on RPM and load. This improves power, efficiency, and emissions. The ECU controls oil pressure to a phaser that rotates the camshaft. Symptoms of VVT failure: rough idle, reduced power, poor economy, rattle at startup, and codes like P0010-P0015."
+  },
+  {
+    "question": "What does a leaking valve cover gasket cause?",
+    "answer": "A leaking valve cover gasket allows oil to escape from the top of the engine. Symptoms: oil around the valve cover, burning oil smell, and oil fouling of spark plugs. Tighten bolts first, if that doesn't fix it, replace the gasket."
+  },
+  {
+    "question": "What is the difference between SOHC and DOHC?",
+    "answer": "SOHC has one camshaft per cylinder head; DOHC has two. DOHC allows more valves per cylinder, better breathing, and independent intake/exhaust timing for more power and efficiency. DOHC is more complex and expensive."
+  },
+  {
+    "question": "What is a turbocharger wastegate?",
+    "answer": "The wastegate controls boost pressure by diverting exhaust gas away from the turbine once target boost is reached. If it sticks open, you get no/low boost. If it sticks closed, you overboost, which is dangerous. Symptoms: overboost codes (P0234), limp mode, or no boost at all."
+  },
+  {
+    "question": "What is a blow-off valve?",
+    "answer": "A blow-off valve (BOV) releases boost pressure from the intake when the throttle closes. Recirculation valves recirculate air back into the intake instead of atmosphere. BOVs that vent to atmosphere can cause rich running on MAF-based cars."
+  },
+  {
+    "question": "What is detonation vs pre-ignition?",
+    "answer": "Detonation (knock) is when the air-fuel mixture ignites from pressure and heat AFTER the spark. Pre-ignition is when the mixture ignites BEFORE the spark, usually from a hot spot. Pre-ignition is more dangerous, it can melt pistons. Both are prevented by correct octane, cool intake temps, and proper tuning."
+  },
+  {
+    "question": "What is a head gasket?",
+    "answer": "The head gasket sits between the engine block and cylinder head. It seals combustion chambers, coolant passages, and oil passages. A blown head gasket causes: overheating, white smoke from exhaust, milky oil, bubbles in radiator, and loss of compression. Repair costs $1,500-$3,000+."
+  },
+  {
+    "question": "What is a compression test?",
+    "answer": "A compression test measures how much pressure each cylinder can build. Remove all spark plugs, screw a compression gauge into a spark plug hole, crank 5-8 times, and read the gauge. Healthy cylinders build 150-200 psi. A cylinder 20%+ lower than the others is a problem. Add oil to a low cylinder: if compression improves, rings are worn; if not, valves are the issue."
+  },
+  {
+    "question": "What is a leak-down test?",
+    "answer": "A leak-down test measures how much air escapes from a pressurized cylinder. Bring the cylinder to TDC, pressurize with compressed air, and measure the percentage lost. Listen for escaping air: intake (intake valve), exhaust (exhaust valve), oil filler (rings), radiator (head gasket). Healthy engines leak less than 10%."
+  },
+  {
+    "question": "What does a faulty EGR valve cause?",
+    "answer": "A stuck-open EGR valve causes rough idle, stalling, and hesitation. A stuck-closed EGR valve causes engine knock/pinging under load. Symptoms: rough idle, check engine light (P0400-P0406), and pinging. Fix: clean or replace the valve."
+  },
+  {
+    "question": "What is a radiator pressure test?",
+    "answer": "A radiator pressure test checks for leaks in the cooling system. A pump is attached to the radiator cap, the system is pressurized to the cap rating, and you watch for pressure drop. A drop indicates a leak. Bubbles with the engine running can indicate a head gasket failure."
+  },
+  {
+    "question": "What is the purpose of a thermostat?",
+    "answer": "The thermostat controls coolant flow to maintain optimal engine temperature. When cold, it's closed and coolant warms up faster. When hot, it opens and coolant flows through the radiator. A stuck-closed thermostat causes overheating. A stuck-open thermostat causes the engine to run too cold."
+  },
+  {
+    "question": "What causes a car to idle too high?",
+    "answer": "High idle causes: vacuum leaks (most common), dirty throttle body, faulty idle air control valve, coolant temp sensor failure, throttle position sensor failure, or a sticking throttle cable. Start with: check for vacuum leaks, clean the throttle body, and scan for codes."
+  },
+  {
+    "question": "What is a lean vs rich condition?",
+    "answer": "Lean = too much air, not enough fuel (P0171). Symptoms: hesitation, misfire, high idle, backfire. Rich = too much fuel, not enough air (P0172). Symptoms: black smoke, fouled plugs, poor fuel economy. Long-term lean or rich conditions can damage the engine."
+  },
+  {
+    "question": "What is a fuel pressure test?",
+    "answer": "A fuel pressure test measures the fuel pressure at the rail. Attach a gauge to the test port, turn the key on, and read the pressure. Compare to spec. Low pressure indicates a weak pump, clogged filter, or faulty regulator. Pressure drops after shutoff means a leaking injector or check valve."
+  },
+  {
+    "question": "What is the purpose of an exhaust manifold?",
+    "answer": "The exhaust manifold collects exhaust gases from each cylinder and directs them into a single pipe (or turbo). A cracked exhaust manifold causes a tick/tapping sound that's louder when cold. Symptoms: ticking noise, exhaust smell in the engine bay."
+  },
+  {
+    "question": "What is an idle air control (IAC) valve?",
+    "answer": "The IAC valve allows the ECU to control idle RPM by bypassing a small amount of air around the throttle plate. Symptoms of failure: rough idle, stalling, surging, or high idle. Often fixed by cleaning with throttle body cleaner."
+  },
+  {
+    "question": "What is a throttle position sensor (TPS)?",
+    "answer": "The TPS tells the ECU the position of the throttle plate. The ECU uses this to calculate fuel, timing, and transmission shift points. Symptoms of failure: poor acceleration, hesitation, stalling, rough idle, or a check engine light (P0120-P0124)."
+  },
+  {
+    "question": "What is a high-pressure fuel pump (HPFP)?",
+    "answer": "Gasoline Direct Injection (GDI) engines use a high-pressure fuel pump to pressurize fuel to 1,500-3,000 psi. The HPFP is driven by the camshaft. Symptoms of failure: long cranking, hesitation, misfire, reduced power, and codes like P0087 (fuel rail pressure too low)."
+  },
+  {
+    "question": "What causes a car to shudder at highway speeds?",
+    "answer": "Highway shudder causes: unbalanced tires (most common), bent wheel, worn CV axles, bad U-joints, warped brake rotors (if only when braking), or worn suspension. Start with a road force balance on the tires."
+  },
+  {
+    "question": "What is an oil pressure warning light?",
+    "answer": "The oil pressure warning light means oil pressure is below safe levels. Stop the engine immediately. Causes: low oil level, wrong oil viscosity, clogged oil filter, failed oil pump, or worn bearings. If the light comes on, pull over safely and shut off the engine."
+  },
+  {
+    "question": "What is a serpentine belt?",
+    "answer": "The serpentine belt drives multiple accessories: alternator, power steering pump, water pump, A/C compressor, and sometimes the supercharger. Symptoms of failure: squealing, cracking or glazing on the belt, missing ribs. A broken serpentine belt causes loss of power steering and engine overheating within minutes."
+  },
+  {
+    "question": "What is the purpose of engine oil?",
+    "answer": "Engine oil serves five functions: 1) Lubricates moving parts. 2) Cools components. 3) Cleans the engine. 4) Seals gaps. 5) Protects against corrosion. Synthetic oil resists breakdown better than conventional and flows better in cold temperatures."
+  },
+  {
+    "question": "What is a cylinder head?",
+    "answer": "The cylinder head sits on top of the engine block, sealing the cylinders. It contains: combustion chamber, valves, spark plugs or injectors, camshaft(s), and coolant/oil passages. A warped head (from overheating) can cause head gasket failure."
+  },
+  {
+    "question": "What is a valve job?",
+    "answer": "A valve job is a repair where the cylinder head is removed, and the valves and valve seats are re-ground to restore a proper seal. Typically $500-$1,500 depending on the engine."
+  },
+  {
+    "question": "What is engine vacuum and why does it matter?",
+    "answer": "Engine vacuum is the pressure difference between the intake manifold and atmosphere. A healthy engine at idle pulls 18-22 inHg. Low or fluctuating vacuum indicates: vacuum leak, worn rings, valve issues, or timing problems."
+  },
+  {
+    "question": "What is a misfire counter?",
+    "answer": "A misfire counter shows how many misfires have occurred on each cylinder. A cylinder with thousands of misfires is the problem. Use it to guide diagnosis: swap coils/plugs between a bad and good cylinder to isolate the fault."
+  },
+  {
+    "question": "What is a top engine cleaner?",
+    "answer": "A top engine cleaner is a chemical sprayed into the intake to remove carbon buildup from the intake valves, combustion chamber, and EGR system. Carbon buildup is a common issue on direct injection engines. The cleaner is sprayed through the intake while the engine runs."
+  },
+  {
+    "question": "What is a cylinder leak-down test?",
+    "answer": "A leak-down test measures how much air escapes from a cylinder when pressurized. It's more precise than a compression test for locating the source of a leak. Bring the cylinder to TDC, pressurize, and measure the percentage lost. Less than 10% is healthy."
+  }
+]
