@@ -3,6 +3,7 @@ import time
 
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import ollama
 import chromadb
@@ -14,6 +15,9 @@ except ImportError:
     from duckduckgo_search import DDGS
 
 app = FastAPI()
+
+# Serves everything in the static/ folder (UI images live in static/img/)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 CODE_MODEL = "qwen2.5-coder:1.5b"
 AUTO_MODEL = "qwen2.5:3b"
@@ -77,7 +81,7 @@ _embedder = SentenceTransformer("all-MiniLM-L6-v2")
 _chroma = chromadb.PersistentClient(path="chroma_db")
 _amck = _chroma.get_collection("amck")
 print(f"RAG ready: {_amck.count()} automotive Q&A pairs indexed.")
-print("Syntrix web search build v4 loaded")
+print("Syntrix web search build v5 loaded")
 
 def retrieve_context(query: str, k: int = 3) -> str:
     emb = _embedder.encode([query]).tolist()
