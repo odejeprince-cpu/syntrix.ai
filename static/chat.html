@@ -1,166 +1,347 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Syntrix AI</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #0f1117;
-      color: #e6e8ee;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    header {
-      padding: 16px 24px;
-      border-bottom: 1px solid #232633;
-      font-weight: 600;
-      font-size: 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    header span { color: #7c8cff; }
-    #modeSelect {
-      background: #1c1f2b;
-      color: #e6e8ee;
-      border: 1px solid #2a2e3d;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 14px;
-      outline: none;
-      cursor: pointer;
-      font-family: inherit;
-    }
-    #modeSelect:focus { border-color: #7c8cff; }
-    #messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .msg {
-      max-width: 75%;
-      padding: 12px 16px;
-      border-radius: 16px;
-      line-height: 1.5;
-      white-space: pre-wrap;
-    }
-    .user {
-      align-self: flex-end;
-      background: #7c8cff;
-      color: white;
-      border-bottom-right-radius: 4px;
-    }
-    .bot {
-      align-self: flex-start;
-      background: #1c1f2b;
-      border: 1px solid #2a2e3d;
-      border-bottom-left-radius: 4px;
-    }
-    form {
-      display: flex;
-      gap: 12px;
-      padding: 16px 24px;
-      border-top: 1px solid #232633;
-    }
-    #input {
-      flex: 1;
-      padding: 14px 18px;
-      border-radius: 24px;
-      border: 1px solid #2a2e3d;
-      background: #1c1f2b;
-      color: #e6e8ee;
-      font-size: 15px;
-      outline: none;
-    }
-    #input:focus { border-color: #7c8cff; }
-    button {
-      padding: 0 22px;
-      border-radius: 24px;
-      border: none;
-      background: #7c8cff;
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    button:hover { background: #6a79e8; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Syntrix AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050816; --bg2:#0a1030; --panel:rgba(14,20,52,.72); --panel2:rgba(20,28,70,.55);
+  --text:#f2f5ff; --muted:#9aa6d4; --line:rgba(110,130,255,.28);
+  --blue:#3b82f6; --violet:#7c4dff; --cyan:#22d3ee; --green:#34d399;
+  --grad:linear-gradient(90deg,#2f6bff,#8a4dff);
+  --font:'Poppins','Segoe UI',system-ui,sans-serif;
+}
+[data-theme="light"]{
+  --bg:#eef2fb; --bg2:#dfe6fa; --panel:rgba(255,255,255,.78); --panel2:rgba(255,255,255,.6);
+  --text:#0f1530; --muted:#55608a; --line:rgba(70,90,190,.28);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font);color:var(--text);background:
+  radial-gradient(ellipse 70% 50% at 70% 0%,rgba(80,60,255,.22),transparent 70%),
+  radial-gradient(ellipse 60% 40% at 20% 100%,rgba(30,90,255,.25),transparent 70%),var(--bg);
+  display:flex;overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.i{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* Sidebar */
+.side{width:250px;flex:none;margin:0;padding:26px 16px 18px;display:flex;flex-direction:column;
+  background:linear-gradient(180deg,var(--panel),rgba(8,12,36,.5));border-right:1px solid var(--line);
+  border-radius:0 28px 28px 0;position:relative;z-index:3}
+.brand{text-align:center;padding-bottom:22px}
+.brand img{width:76px;height:auto;display:block;margin:0 auto}
+.brand h1{font-size:30px;font-weight:700;letter-spacing:-.5px;margin-top:4px}
+.brand h1 span,.hero h2 span{color:#8b5cff}
+.brand p{font-size:12px;color:var(--muted);margin-top:4px}
+.nav{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.nav button{display:flex;align-items:center;gap:16px;padding:14px 20px;border-radius:14px;font-size:15px;color:var(--muted);text-align:left;transition:background .2s,color .2s}
+.nav button:hover{background:var(--panel2);color:var(--text)}
+.nav button.primary{background:linear-gradient(90deg,#2f6bff,#7c4dff);color:#fff;font-weight:500;box-shadow:0 8px 24px rgba(80,80,255,.35);margin-bottom:8px}
+.powered{margin-top:auto;border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center;background:var(--panel2)}
+.powered b{display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:500}
+.powered b .i{width:18px;height:18px;color:#8b5cff}
+.powered small{display:block;margin-top:6px;font-size:11.5px;color:var(--muted)}
+
+/* Main */
+.main{flex:1;min-width:0;position:relative;display:flex;flex-direction:column;height:100%}
+.top{display:flex;align-items:center;justify-content:center;padding:26px 28px 0;position:relative;z-index:3}
+.tabs{display:flex;align-items:center;border:1px solid var(--line);border-radius:999px;padding:4px;background:var(--panel)}
+.tab{display:flex;align-items:center;gap:12px;padding:14px 34px;border-radius:999px;font-size:15px;font-weight:500;color:var(--muted);transition:all .2s}
+.tab:hover{color:var(--text)}
+.tab.on{color:#fff;background:linear-gradient(180deg,rgba(47,107,255,.35),rgba(47,107,255,.12));box-shadow:inset 0 -3px 0 var(--blue),0 0 22px rgba(59,130,246,.45);border:1px solid rgba(90,140,255,.7)}
+.tabs i{width:1px;height:28px;background:var(--line);margin:0 4px}
+.tools{position:absolute;right:28px;top:26px;display:flex;gap:16px;align-items:center}
+.circ{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:var(--panel);border:1px solid var(--line)}
+.avatar{position:relative;font-weight:600;font-size:22px}
+.avatar::after{content:"";position:absolute;right:2px;bottom:4px;width:11px;height:11px;border-radius:50%;background:#2ee66b;border:2px solid var(--bg)}
+
+/* Welcome */
+.welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:20px 36px 110px;position:relative;overflow-x:hidden;overflow-y:auto;z-index:1}
+.deco{position:absolute;pointer-events:none;z-index:0}
+.car{left:-10px;top:78px;width:440px;height:auto}
+.laptop{right:-10px;top:60px;width:440px;height:auto}
+.hero{text-align:center;position:relative;z-index:1;margin-top:24px}
+.hero img{width:112px;height:auto;display:block;margin:0 auto;filter:drop-shadow(0 0 22px rgba(90,80,255,.55))}
+.hero h2{font-size:60px;font-weight:700;letter-spacing:-1.5px;line-height:1.1;margin-top:6px}
+.hero p{font-size:21px;margin-top:14px;color:var(--text);font-weight:400}
+.hero p b{font-weight:600}
+.hero hr{width:76px;height:3px;border:0;border-radius:3px;background:linear-gradient(90deg,transparent,#8b5cff,transparent);margin:18px auto 0}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;width:100%;max-width:1240px;margin-top:28px;position:relative;z-index:1}
+.card{display:flex;align-items:center;justify-content:space-between;gap:14px;text-align:left;padding:16px 18px 16px 124px;min-height:104px;border-radius:22px;position:relative;overflow:hidden;
+  background:linear-gradient(120deg,rgba(20,30,80,.85),rgba(10,14,40,.85));border:1px solid var(--c);transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 12px 34px -8px var(--c)}
+.card.auto{--c:#3aa0ff}.card.code{--c:#8a4dff}.card.general{--c:#34d399}
+.card .art{position:absolute;left:0;top:0;bottom:0;width:118px;-webkit-mask-image:linear-gradient(90deg,#000 62%,transparent);mask-image:linear-gradient(90deg,#000 62%,transparent)}
+.card .art img{width:100%;height:100%;object-fit:cover;display:block}
+.card h3{font-size:18px;font-weight:600}
+.card p{font-size:13.5px;color:var(--muted);margin-top:4px;line-height:1.4;max-width:190px}
+.card .go{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);background:rgba(255,255,255,.06);flex:none}
+
+/* Chat */
+.msgs{flex:1;overflow-y:auto;padding:28px 36px 130px;display:none;position:relative;z-index:1}
+.msgs .wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.chatting .welcome{display:none}
+.chatting .msgs{display:block}
+.m{max-width:88%;padding:14px 18px;border-radius:20px;font-size:15px;line-height:1.6;overflow-wrap:anywhere}
+.m.u{align-self:flex-end;background:linear-gradient(90deg,#2f6bff,#7c4dff);color:#fff;border-bottom-right-radius:6px}
+.m.b{align-self:flex-start;background:var(--panel);border:1px solid var(--line);border-bottom-left-radius:6px}
+.m h4{font-size:16px;font-weight:600;margin:8px 0 4px}
+.m pre{background:rgba(0,0,0,.45);border:1px solid var(--line);border-radius:12px;padding:12px 14px;overflow-x:auto;margin:10px 0;font-size:13.5px}
+.m code{font-family:Consolas,'Courier New',monospace}
+.m :not(pre)>code{background:rgba(120,140,255,.2);padding:1px 6px;border-radius:6px;font-size:13.5px}
+.m a{color:var(--cyan)}
+.think{display:flex;gap:6px;align-items:center;color:var(--muted)}
+.think i{width:8px;height:8px;border-radius:50%;background:var(--cyan);animation:b 1s infinite ease-in-out}
+.think i:nth-child(2){animation-delay:.15s}.think i:nth-child(3){animation-delay:.3s}
+@keyframes b{0%,80%,100%{opacity:.25;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+
+/* Input */
+.bar{position:absolute;left:0;right:0;bottom:0;padding:0 36px 18px;z-index:5;display:flex;justify-content:center;
+  background:linear-gradient(0deg,var(--bg) 35%,transparent)}
+.field{width:100%;max-width:960px;display:flex;align-items:center;gap:12px;padding:7px 8px 7px 20px;border-radius:999px;background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(14px)}
+.field:focus-within{border-color:rgba(90,140,255,.8);box-shadow:0 0 26px rgba(59,130,246,.35)}
+.field textarea{flex:1;background:none;border:0;outline:0;resize:none;color:var(--text);font:inherit;font-size:15px;max-height:110px;height:24px;line-height:24px;padding:0}
+.field textarea::placeholder{color:var(--muted)}
+.field .clip{color:var(--muted);padding:4px}
+.field .sep{width:1px;height:22px;background:var(--line)}
+.send{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#3b82f6,#8a4dff);box-shadow:0 0 24px rgba(100,90,255,.6);color:#fff;flex:none}
+.send:disabled{opacity:.5;cursor:wait}
+.send .i{width:20px;height:20px;fill:#fff}
+
+.toast{position:fixed;left:50%;top:104px;transform:translateX(-50%) translateY(-12px);background:var(--panel);border:1px solid var(--line);padding:10px 18px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:all .25s;z-index:20}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:1100px){
+  .cards{grid-template-columns:1fr;max-width:560px}
+  .hero h2{font-size:38px}.hero img{width:78px}.hero p{font-size:16px;margin-top:8px}.hero hr{margin-top:12px}.cards{margin-top:18px}.deco{display:none}
+  .tab{padding:12px 20px}.tools{display:none}
+}
+@media (max-width:820px){
+  .side{display:none}
+  .tab span{display:none}.tab{padding:12px 22px}
+  .welcome{padding:20px 18px 120px;overflow-y:auto}
+  .bar{padding:0 14px 16px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- Compact layout ---- */
+.hero{margin-top:10px}
+.hero img{width:92px}.hero h2{font-size:52px}.hero p{font-size:19px;margin-top:10px}
+.cards{margin-top:28px;gap:20px}
+.card{min-height:108px;padding:16px 20px 16px 140px}
+.card .art{width:132px}
+.card h3{font-size:19px}
+.card p{font-size:14px;margin-top:4px}
+.card .go{width:40px;height:40px}
+.bar{padding:0 28px 18px}
+.field{max-width:900px;padding:8px 10px 8px 20px;gap:10px}
+.field textarea{font-size:15px;height:24px;line-height:24px}
+.field .sep{height:24px}
+.send{width:46px;height:46px}.send .i{width:20px;height:20px}
+@media (max-width:1100px){
+  .cards{max-width:520px;gap:12px;margin-top:22px}
+  .card{min-height:84px;padding:12px 16px 12px 112px}
+  .card .art{width:100px}
+  .card h3{font-size:17px}
+  .card p{font-size:13px;max-width:none;margin-top:2px}
+  .card .go{width:34px;height:34px}
+  .hero img{width:76px}.hero h2{font-size:40px}.hero p{font-size:16px}
+  .welcome{padding-top:14px}
+}
+@media (max-width:820px){.bar{padding:0 12px 12px}}
+
+/* ---- Liquid glass (frosted, translucent, bright edge highlight) ---- */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(circle 280px at 12% 72%,rgba(60,120,255,.30),transparent 70%),
+             radial-gradient(circle 320px at 88% 28%,rgba(140,80,255,.26),transparent 70%),
+             radial-gradient(circle 240px at 55% 95%,rgba(34,211,238,.16),transparent 70%)}
+.side,.tabs,.circ,.powered,.field,.m.b,.toast{
+  background:linear-gradient(135deg,rgba(255,255,255,.11),rgba(255,255,255,.03));
+  -webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -1px 0 rgba(255,255,255,.06),0 10px 34px rgba(0,0,0,.35)}
+.side{border-radius:0 28px 28px 0}
+.card{background:linear-gradient(135deg,rgba(255,255,255,.10),rgba(255,255,255,.02)),linear-gradient(120deg,rgba(20,30,80,.55),rgba(10,14,40,.55));
+  -webkit-backdrop-filter:blur(20px) saturate(170%);backdrop-filter:blur(20px) saturate(170%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 10px 30px rgba(0,0,0,.35)}
+.card:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 12px 34px -8px var(--c)}
+.card .go{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2)}
+.tab.on{background:linear-gradient(180deg,rgba(90,150,255,.5),rgba(47,107,255,.2));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 22px rgba(59,130,246,.45);border:1px solid rgba(130,170,255,.7)}
+.field:focus-within{border-color:rgba(130,170,255,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 26px rgba(59,130,246,.35)}
+[data-theme="light"] .side,[data-theme="light"] .tabs,[data-theme="light"] .circ,[data-theme="light"] .powered,
+[data-theme="light"] .field,[data-theme="light"] .m.b,[data-theme="light"] .toast{
+  background:linear-gradient(135deg,rgba(255,255,255,.75),rgba(255,255,255,.45));border-color:rgba(80,100,200,.25);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 30px rgba(60,80,160,.18)}
+[data-theme="light"] .card{background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(235,240,255,.55))}
+</style>
 </head>
 <body>
-  <header>
-    <div>Syntrix <span>AI</span></div>
-    <select id="modeSelect">
-      <option value="code">💻 Programming</option>
-      <option value="auto">🚗 Automotive</option>
-      <option value="general">General</option>
-    </select>
-  </header>
 
-  <div id="messages">
-    <div class="msg bot">Hi! I'm Syntrix. Ask me anything about code or automotive engineering.</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3aa0ff"/><stop offset=".55" stop-color="#6a4dff"/><stop offset="1" stop-color="#9b5cff"/></linearGradient>
+    <symbol id="logo" viewBox="0 0 74 70"><path d="M22 4h46l-14 18H12z" fill="url(#lg)"/><path d="M12 22h34l-10 12H2z" fill="url(#lg)" opacity=".85"/><path d="M52 36h20L58 48H38z" fill="url(#lg)" opacity=".85"/><path d="M6 48h52l-14 18H-8z" fill="url(#lg)"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/></symbol>
+    <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5M12 7v5l3 2"/></symbol>
+    <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.4v.4"/></symbol>
+    <symbol id="i-car" viewBox="0 0 24 24"><path d="M3 16v-3.5L5.2 7h13.6L21 12.5V16zM3 16h18M6.5 19v-3M17.5 19v-3"/><circle cx="7.5" cy="13.2" r=".7"/><circle cx="16.5" cy="13.2" r=".7"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5M13.5 5l-3 14"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></symbol>
+    <symbol id="i-clip" viewBox="0 0 24 24"><path d="M20 11l-8 8a5 5 0 0 1-7-7l8-8a3.3 3.3 0 0 1 5 5l-8 8a1.7 1.7 0 0 1-2.4-2.4l7-7"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3L3 10.5l7 3 3 7z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11z"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z" fill="currentColor"/></symbol>
+  </defs>
+</svg>
+
+<aside class="side">
+  <div class="brand">
+    <img src="/static/img/logo-side.png" alt="">
+    <h1>Syntrix <span>AI</span></h1>
+    <p>Smarter. Deeper. Always Here.</p>
+  </div>
+  <nav class="nav">
+    <button class="primary" id="newChat"><svg class="i"><use href="#i-chat"/></svg>New Chat</button>
+    <button data-soon="History"><svg class="i"><use href="#i-history"/></svg>History</button>
+    <button data-soon="Saved Chats"><svg class="i"><use href="#i-bookmark"/></svg>Saved Chats</button>
+    <button data-soon="Settings"><svg class="i"><use href="#i-gear"/></svg>Settings</button>
+    <button data-soon="About"><svg class="i"><use href="#i-info"/></svg>About</button>
+  </nav>
+  <div class="powered"><b><svg class="i"><use href="#i-bolt"/></svg>Powered by AI</b><small>Ask. Learn. Build. Explore.</small></div>
+</aside>
+
+<main class="main" id="app">
+  <div class="top">
+    <div class="tabs" role="tablist">
+      <button class="tab on" role="tab" data-mode="auto"><svg class="i"><use href="#i-car"/></svg><span>AutoMobile</span></button>
+      <button class="tab" role="tab" data-mode="code"><svg class="i"><use href="#i-code"/></svg><span>Programming</span></button>
+      <i></i>
+      <button class="tab" role="tab" data-mode="general"><svg class="i"><use href="#i-globe"/></svg><span>General</span></button>
+    </div>
+    <div class="tools">
+      <button class="circ" id="theme" aria-label="Toggle light and dark theme"><svg class="i"><use href="#i-moon"/></svg></button>
+      <div class="circ avatar" aria-label="Profile">P</div>
+    </div>
   </div>
 
-  <form id="chatForm">
-    <input id="input" type="text" placeholder="Ask Syntrix anything..." autocomplete="off" />
-    <button type="submit">Send</button>
-  </form>
+  <section class="welcome">
+    <img class="deco car" src="/static/img/car.png" alt="">
+    <img class="deco laptop" src="/static/img/laptop.png" alt="">
 
-  <script>
-    const form = document.getElementById("chatForm");
-    const input = document.getElementById("input");
-    const messages = document.getElementById("messages");
-    const modeSelect = document.getElementById("modeSelect");
+    <div class="hero">
+      <img src="/static/img/logo-hero.png" alt="">
+      <h2>Syntrix <span>AI</span></h2>
+      <p>Your intelligent assistant for <b>AutoMobile</b>, Programming and more.</p>
+      <hr>
+    </div>
 
-    function addMessage(text, who) {
-      const div = document.createElement("div");
-      div.className = "msg " + who;
-      div.textContent = text;
-      messages.appendChild(div);
-      messages.scrollTop = messages.scrollHeight;
-    }
+    <div class="cards">
+      <button class="card auto" data-mode="auto"><div class="art"><img src="/static/img/card-auto.png" alt=""></div><div><h3>AutoMobile</h3><p>Get car info, diagnostics and more.</p></div><span class="go"><svg class="i"><use href="#i-arrow"/></svg></span></button>
+      <button class="card code" data-mode="code"><div class="art"><img src="/static/img/card-code.png" alt=""></div><div><h3>Programming</h3><p>Code, debug, and learn.</p></div><span class="go"><svg class="i"><use href="#i-arrow"/></svg></span></button>
+      <button class="card general" data-mode="general"><div class="art"><img src="/static/img/card-general.png" alt=""></div><div><h3>General</h3><p>Ask anything, anytime.</p></div><span class="go"><svg class="i"><use href="#i-arrow"/></svg></span></button>
+    </div>
+  </section>
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const text = input.value.trim();
-      if (!text) return;
-      
-      addMessage(text, "user");
-      input.value = "";
+  <section class="msgs" id="msgs"><div class="wrap" id="wrap"></div></section>
 
-      // Add a temporary "Thinking..." bubble
-      const thinkingBubble = document.createElement("div");
-      thinkingBubble.className = "msg bot";
-      thinkingBubble.textContent = "Syntrix is thinking...";
-      messages.appendChild(thinkingBubble);
-      messages.scrollTop = messages.scrollHeight;
+  
 
-      try {
-        const res = await fetch("/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            message: text,
-            mode: modeSelect.value 
-          }),
-        });
-        
-        const data = await res.json();
-        
-        // Remove the "Thinking..." bubble
-        thinkingBubble.remove();
-        
-        addMessage(data.reply, "bot");
-      } catch (err) {
-        thinkingBubble.remove();
-        addMessage("⚠️ Network error. Is the server running?", "bot");
-      }
-    });
-  </script>
+  <div class="bar">
+    <div class="field">
+      <button class="clip" data-soon="Attachments" aria-label="Attach a file"><svg class="i"><use href="#i-clip"/></svg></button>
+      <textarea id="input" rows="1" placeholder="Type your message…" aria-label="Message"></textarea>
+      <span class="sep"></span>
+      <button class="send" id="send" aria-label="Send"><svg class="i"><use href="#i-send"/></svg></button>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const app = $('#app'), wrap = $('#wrap'), msgs = $('#msgs'), input = $('#input'), sendBtn = $('#send');
+const PLACEHOLDERS = {
+  auto: 'Ask about engines, diagnostics, maintenance…',
+  code: 'Paste code or describe what you want to build…',
+  general: 'Ask anything. General mode searches the web…'
+};
+let mode = 'auto', busy = false, tt;
+
+function toast(t){ const el = $('#toast'); el.textContent = t; el.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => el.classList.remove('show'), 2200); }
+
+function setMode(m){
+  mode = m;
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.mode === m));
+  input.placeholder = PLACEHOLDERS[m];
+}
+document.querySelectorAll('.tab').forEach(b => b.onclick = () => setMode(b.dataset.mode));
+document.querySelectorAll('.card').forEach(b => b.onclick = () => { setMode(b.dataset.mode); input.focus(); });
+document.querySelectorAll('[data-soon]').forEach(b => b.onclick = () => toast(b.dataset.soon + ' is coming soon.'));
+
+$('#theme').onclick = () => {
+  const r = document.documentElement;
+  r.dataset.theme = r.dataset.theme === 'dark' ? 'light' : 'dark';
+};
+
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function render(t){
+  return t.split('```').map((p, i) => {
+    if (i % 2) { const nl = p.indexOf('\n'); const code = nl > -1 ? p.slice(nl + 1) : p; return '<pre><code>' + esc(code.replace(/\n$/, '')) + '</code></pre>'; }
+    return esc(p)
+      .replace(/^#{1,6}\s*(.+)$/gm, '<h4>$1</h4>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/`([^`\n]+)`/g, '<code>$1</code>')
+      .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>')
+      .replace(/\n/g, '<br>').replace(/<\/h4><br>/g, '</h4>');
+  }).join('');
+}
+
+function add(cls, html){
+  const d = document.createElement('div');
+  d.className = 'm ' + cls; d.innerHTML = html;
+  wrap.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+  return d;
+}
+
+async function send(){
+  const text = input.value.trim();
+  if (!text || busy) return;
+  busy = true; sendBtn.disabled = true;
+  app.classList.add('chatting');
+  add('u', esc(text).replace(/\n/g, '<br>'));
+  input.value = ''; input.style.height = '24px';
+  const wait = add('b', '<span class="think"><i></i><i></i><i></i></span>');
+  try {
+    const r = await fetch('/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: text, mode }) });
+    const data = await r.json();
+    wait.innerHTML = render(data.reply || 'No reply came back from the model.');
+  } catch (e) {
+    wait.innerHTML = 'Could not reach the Syntrix server. Check that it is running, then try again.';
+  }
+  busy = false; sendBtn.disabled = false;
+  msgs.scrollTop = msgs.scrollHeight; input.focus();
+}
+sendBtn.onclick = send;
+input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+input.addEventListener('input', () => { input.style.height = '24px'; input.style.height = Math.min(input.scrollHeight, 120) + 'px'; });
+
+$('#newChat').onclick = async () => {
+  try { await fetch('/chat/clear', { method: 'POST' }); } catch (e) {}
+  wrap.innerHTML = ''; app.classList.remove('chatting'); input.value = ''; input.focus();
+};
+setMode('auto');
+</script>
 </body>
 </html>
