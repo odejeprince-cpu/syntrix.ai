@@ -100,19 +100,20 @@ button:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid va
 @keyframes b{0%,80%,100%{opacity:.25;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
 
 /* Input */
-.bar{position:absolute;left:0;right:0;bottom:0;padding:0 36px 18px;z-index:5;display:flex;justify-content:center;
+.bar{position:absolute;left:0;right:0;bottom:0;padding:0 36px 18px;z-index:5;display:flex;flex-direction:column;align-items:center;gap:10px;
   background:linear-gradient(0deg,var(--bg) 35%,transparent)}
 .field{width:100%;max-width:960px;display:flex;align-items:center;gap:12px;padding:7px 8px 7px 20px;border-radius:999px;background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(14px)}
 .field:focus-within{border-color:rgba(90,140,255,.8);box-shadow:0 0 26px rgba(59,130,246,.35)}
 .field textarea{flex:1;background:none;border:0;outline:0;resize:none;color:var(--text);font:inherit;font-size:15px;max-height:110px;height:24px;line-height:24px;padding:0}
 .field textarea::placeholder{color:var(--muted)}
-.field .clip{color:var(--muted);padding:4px}
+.field .clip{color:var(--muted);padding:4px;transition:color .2s}
+.field .clip:hover{color:var(--text)}
 .field .sep{width:1px;height:22px;background:var(--line)}
 .send{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#3b82f6,#8a4dff);box-shadow:0 0 24px rgba(100,90,255,.6);color:#fff;flex:none}
 .send:disabled{opacity:.5;cursor:wait}
 .send .i{width:20px;height:20px;fill:#fff}
 
-.toast{position:fixed;left:50%;top:104px;transform:translateX(-50%) translateY(-12px);background:var(--panel);border:1px solid var(--line);padding:10px 18px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:all .25s;z-index:20}
+.toast{position:fixed;left:50%;top:104px;transform:translateX(-50%) translateY(-12px);background:var(--panel);border:1px solid var(--line);padding:10px 18px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:all .25s;z-index:20;max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 @media (max-width:1100px){
@@ -160,7 +161,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
   background:radial-gradient(circle 280px at 12% 72%,rgba(60,120,255,.30),transparent 70%),
              radial-gradient(circle 320px at 88% 28%,rgba(140,80,255,.26),transparent 70%),
              radial-gradient(circle 240px at 55% 95%,rgba(34,211,238,.16),transparent 70%)}
-.side,.tabs,.circ,.powered,.field,.m.b,.toast{
+.side,.tabs,.circ,.powered,.field,.m.b,.toast,.chip{
   background:linear-gradient(135deg,rgba(255,255,255,.11),rgba(255,255,255,.03));
   -webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);
   border:1px solid rgba(255,255,255,.16);
@@ -175,7 +176,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 22px rgba(59,130,246,.45);border:1px solid rgba(130,170,255,.7)}
 .field:focus-within{border-color:rgba(130,170,255,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 26px rgba(59,130,246,.35)}
 [data-theme="light"] .side,[data-theme="light"] .tabs,[data-theme="light"] .circ,[data-theme="light"] .powered,
-[data-theme="light"] .field,[data-theme="light"] .m.b,[data-theme="light"] .toast{
+[data-theme="light"] .field,[data-theme="light"] .m.b,[data-theme="light"] .toast,[data-theme="light"] .chip{
   background:linear-gradient(135deg,rgba(255,255,255,.75),rgba(255,255,255,.45));border-color:rgba(80,100,200,.25);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 30px rgba(60,80,160,.18)}
 [data-theme="light"] .card{background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(235,240,255,.55))}
@@ -208,6 +209,17 @@ body.side-closed .side{margin-left:-250px;opacity:0;visibility:hidden;pointer-ev
 .sidetoggle{position:absolute;left:28px;top:32px;width:46px;height:46px;color:var(--muted);transition:color .2s,transform .2s}
 .sidetoggle:hover{color:var(--text);transform:scale(1.06)}
 .sidetoggle .i{width:22px;height:22px}
+
+/* ---- Attached file chip ---- */
+.attach{width:100%;max-width:900px;display:none}
+.attach.show{display:flex}
+.chip{display:inline-flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:14px;font-size:13.5px;max-width:100%}
+.chip .i{width:18px;height:18px;color:var(--cyan)}
+.chip .cn{max-width:340px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.chip .cs{color:var(--muted);font-size:12.5px;white-space:nowrap}
+.chip .cx{padding:4px;border-radius:8px;color:var(--muted);display:grid;place-items:center}
+.chip .cx:hover{color:#ff7a8a;background:rgba(255,90,110,.12)}
+.chip .cx .i{width:16px;height:16px;color:inherit}
 </style>
 </head>
 <body>
@@ -293,12 +305,14 @@ body.side-closed .side{margin-left:-250px;opacity:0;visibility:hidden;pointer-ev
   </aside>
 
   <div class="bar">
+    <div class="attach" id="attach"></div>
     <div class="field">
-      <button class="clip" data-soon="Attachments" aria-label="Attach a file"><svg class="i"><use href="#i-clip"/></svg></button>
+      <button class="clip" id="clip" aria-label="Attach a file" title="Attach a PDF or text file"><svg class="i"><use href="#i-clip"/></svg></button>
       <textarea id="input" rows="1" placeholder="Type your message…" aria-label="Message"></textarea>
       <span class="sep"></span>
       <button class="send" id="send" aria-label="Send"><svg class="i"><use href="#i-send"/></svg></button>
     </div>
+    <input type="file" id="fileInput" hidden accept=".pdf,.txt,.md,.py,.json,.csv,.js,.ts,.html,.css,.log,.yml,.yaml,.xml,.ini,.toml,.sql,.java,.c,.cpp,.h,.sh">
   </div>
 </main>
 
@@ -313,8 +327,9 @@ const PLACEHOLDERS = {
   general: 'Ask anything. General mode searches the web…'
 };
 let mode = 'auto', busy = false, tt, chatId = null;
+let attachment = null, uploading = false;
 
-function toast(t){ const el = $('#toast'); el.textContent = t; el.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => el.classList.remove('show'), 2200); }
+function toast(t, ms = 2200){ const el = $('#toast'); el.textContent = t; el.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => el.classList.remove('show'), ms); }
 
 function setMode(m){
   mode = m;
@@ -341,6 +356,50 @@ function setSide(closed){
 sideToggle.onclick = () => setSide(!document.body.classList.contains('side-closed'));
 try { setSide(localStorage.getItem('syntrix-side-closed') === '1'); } catch (e) {}
 
+/* ---- File attachments ---- */
+const attachBox = $('#attach'), fileInput = $('#fileInput');
+
+function showChip(name, note){
+  attachBox.classList.add('show');
+  attachBox.innerHTML = '<div class="chip"><svg class="i"><use href="#i-clip"/></svg><span class="cn"></span><span class="cs"></span><button class="cx" aria-label="Remove file"><svg class="i"><use href="#i-x"/></svg></button></div>';
+  attachBox.querySelector('.cn').textContent = name;
+  attachBox.querySelector('.cs').textContent = note;
+  attachBox.querySelector('.cx').onclick = clearAttachment;
+}
+function clearAttachment(){
+  attachment = null;
+  attachBox.classList.remove('show');
+  attachBox.innerHTML = '';
+}
+
+$('#clip').onclick = () => {
+  if (busy || uploading) { toast('Please wait a moment.'); return; }
+  fileInput.click();
+};
+
+fileInput.addEventListener('change', async () => {
+  const f = fileInput.files[0];
+  fileInput.value = '';   // lets you pick the same file again later
+  if (!f) return;
+  uploading = true;
+  showChip(f.name, 'Reading file…');
+  try {
+    const fd = new FormData();
+    fd.append('file', f);
+    const r = await fetch('/api/upload', { method: 'POST', body: fd });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(data.detail || 'Could not read that file.');
+    attachment = { name: data.name, text: data.text };
+    showChip(data.name, data.was_cut ? 'first part only' : 'ready');
+    if (data.was_cut) toast('Long file: only the first ~6,000 characters will be read.', 4000);
+  } catch (e) {
+    clearAttachment();
+    toast(e.message || 'Could not upload that file.', 4500);
+  }
+  uploading = false;
+  input.focus();
+});
+
 function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function render(t){
   return t.split('```').map((p, i) => {
@@ -363,15 +422,20 @@ function add(cls, html){
 }
 
 async function send(){
-  const text = input.value.trim();
-  if (!text || busy) return;
+  let text = input.value.trim();
+  if ((!text && !attachment) || busy || uploading) return;
+  if (!text) text = 'Summarize this file.';
+  const att = attachment;
   busy = true; sendBtn.disabled = true;
   app.classList.add('chatting');
-  add('u', esc(text).replace(/\n/g, '<br>'));
+  add('u', esc((att ? '📎 ' + att.name + '\n' : '') + text).replace(/\n/g, '<br>'));
   input.value = ''; input.style.height = '24px';
+  const body = { message: text, mode, chat_id: chatId };
+  if (att) { body.attachment_name = att.name; body.attachment_text = att.text; }
+  clearAttachment();
   const wait = add('b', '<span class="think"><i></i><i></i><i></i></span>');
   try {
-    const r = await fetch('/chat/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: text, mode, chat_id: chatId }) });
+    const r = await fetch('/chat/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     if (!r.ok || !r.body) throw new Error('bad response');
     const cid = r.headers.get('X-Chat-Id');
     if (cid) chatId = cid;
@@ -400,6 +464,7 @@ input.addEventListener('input', () => { input.style.height = '24px'; input.style
 
 function newChat(){
   chatId = null; wrap.innerHTML = ''; app.classList.remove('chatting');
+  clearAttachment();
   input.value = ''; input.style.height = '24px'; closeHist(); input.focus();
 }
 $('#newChat').onclick = newChat;
@@ -449,6 +514,7 @@ async function openChat(id){
     if (!r.ok) throw new Error('not found');
     const c = await r.json();
     chatId = c.id; wrap.innerHTML = '';
+    clearAttachment();
     c.messages.forEach(m => add(m.role === 'user' ? 'u' : 'b', m.role === 'user' ? esc(m.text).replace(/\n/g, '<br>') : render(m.text)));
     setMode(c.mode); app.classList.add('chatting'); closeHist();
     msgs.scrollTop = msgs.scrollHeight;
