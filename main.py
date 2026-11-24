@@ -2,7 +2,7 @@ import re
 import time
 
 from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import ollama
@@ -81,7 +81,7 @@ _embedder = SentenceTransformer("all-MiniLM-L6-v2")
 _chroma = chromadb.PersistentClient(path="chroma_db")
 _amck = _chroma.get_collection("amck")
 print(f"RAG ready: {_amck.count()} automotive Q&A pairs indexed.")
-print("Syntrix web search build v5 loaded")
+print("Syntrix streaming build v6 loaded")
 
 def retrieve_context(query: str, k: int = 3) -> str:
     emb = _embedder.encode([query]).tolist()
@@ -144,6 +144,50 @@ class ChatIn(BaseModel):
     message: str
     mode: str = "code"
 
+def save_to_history(user_text: str, reply: str):
+    """Keeps only the last HISTORY_LIMIT messages (no warnings or sources)."""
+    global _history
+    _history.append({"role": "user", "content": user_text})
+    _history.append({"role": "assistant", "content": reply})
+    if len(_history) > HISTORY_LIMIT:
+        _history = _history[-HISTORY_LIMIT:]
+
+def prepare(payload: ChatIn):
+    """Does everything that happens BEFORE the model starts writing:
+    picks the model, gathers RAG / web context, builds the messages list.
+    Returns (model, messages, options, warning_text, sources_text)."""
+    sources_text = ""
+    warning_text = ""
+    options = {}
+
+    if payload.mode == "auto":
+        context = retrieve_context(payload.message)
+        system = AUTO_PROMPT + f"\n\n--- Reference material ---\n{context}\n--- End reference ---"
+        model = AUTO_MODEL
+    elif payload.mode == "general":
+        results = web_search(payload.message)
+        system = GENERAL_PROMPT
+        if results:
+            system += (
+                "\n\n--- Web search results ---\n"
+                f"{format_search_context(results)}\n"
+                "--- End web search results ---"
+            )
+            sources_text = format_sources(results)
+        else:
+            system += NO_RESULTS_NOTE
+            warning_text = NO_RESULTS_WARNING
+        model = GENERAL_MODEL
+        options = {"temperature": 0.2, "num_ctx": 4096}
+    else:
+        system = CODE_PROMPT
+        model = CODE_MODEL
+
+    messages = [{"role": "system", "content": system}]
+    messages.extend(_history[-HISTORY_LIMIT:])
+    messages.append({"role": "user", "content": payload.message})
+    return model, messages, options, warning_text, sources_text
+
 @app.get("/")
 def home():
     return {"message": "Hello from Syntrix"}
@@ -158,50 +202,46 @@ def clear_chat():
     _history = []
     return {"status": "cleared"}
 
+# Non-streaming version (waits for the full answer). Kept for testing in /docs.
 @app.post("/chat")
 def chat_reply(payload: ChatIn):
-    global _history
     try:
-        sources_text = ""
-        warning_text = ""
-        options = {}
-
-        if payload.mode == "auto":
-            context = retrieve_context(payload.message)
-            system = AUTO_PROMPT + f"\n\n--- Reference material ---\n{context}\n--- End reference ---"
-            model = AUTO_MODEL
-        elif payload.mode == "general":
-            results = web_search(payload.message)
-            system = GENERAL_PROMPT
-            if results:
-                system += (
-                    "\n\n--- Web search results ---\n"
-                    f"{format_search_context(results)}\n"
-                    "--- End web search results ---"
-                )
-                sources_text = format_sources(results)
-            else:
-                system += NO_RESULTS_NOTE
-                warning_text = NO_RESULTS_WARNING
-            model = GENERAL_MODEL
-            options = {"temperature": 0.2, "num_ctx": 4096}
-        else:
-            system = CODE_PROMPT
-            model = CODE_MODEL
-
-        messages = [{"role": "system", "content": system}]
-        messages.extend(_history[-HISTORY_LIMIT:])
-        messages.append({"role": "user", "content": payload.message})
-
+        model, messages, options, warning_text, sources_text = prepare(payload)
         resp = ollama.chat(model=model, messages=messages, options=options)
         reply = resp["message"]["content"]
-
-        # Save only the model's answer in history (not warnings or sources)
-        _history.append({"role": "user", "content": payload.message})
-        _history.append({"role": "assistant", "content": reply})
-        if len(_history) > HISTORY_LIMIT:
-            _history = _history[-HISTORY_LIMIT:]
-
+        save_to_history(payload.message, reply)
         return {"reply": warning_text + reply + sources_text}
     except Exception as e:
         return {"reply": f"⚠️ AI error: {e}"}
+
+# Streaming version: sends the answer piece by piece as the model writes it.
+@app.post("/chat/stream")
+def chat_stream(payload: ChatIn):
+    def generate():
+        try:
+            model, messages, options, warning_text, sources_text = prepare(payload)
+
+            if warning_text:
+                yield warning_text
+
+            reply = ""
+            for chunk in ollama.chat(
+                model=model, messages=messages, options=options, stream=True
+            ):
+                piece = chunk["message"]["content"]
+                if piece:
+                    reply += piece
+                    yield piece
+
+            save_to_history(payload.message, reply)
+
+            if sources_text:
+                yield sources_text
+        except Exception as e:
+            yield f"\n\n⚠️ AI error: {e}"
+
+    return StreamingResponse(
+        generate(),
+        media_type="text/plain; charset=utf-8",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
