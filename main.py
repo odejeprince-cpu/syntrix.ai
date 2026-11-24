@@ -93,13 +93,18 @@ STOPWORDS = {
     "explain", "give", "know", "there",
 }
 
+# Words that show a question refers back to an earlier topic ("when was HE born?")
+PRONOUNS = {"he", "she", "it", "its", "they", "them", "their", "his", "her",
+            "him", "that", "this", "these", "those", "there"}
+FOLLOWUP_STARTS = ("and ", "what about", "how about")
+
 # --- RAG Setup (loaded once at startup) ---
 print("Loading RAG system...")
 _embedder = SentenceTransformer("all-MiniLM-L6-v2")
 _chroma = chromadb.PersistentClient(path="chroma_db")
 _amck = _chroma.get_collection("amck")
 print(f"RAG ready: {_amck.count()} automotive Q&A pairs indexed.")
-print("Syntrix keep-alive build v8 loaded")
+print("Syntrix follow-up search build v10 loaded")
 
 def retrieve_context(query: str, k: int = 3) -> str:
     emb = _embedder.encode([query]).tolist()
@@ -116,12 +121,42 @@ def to_keywords(message: str, max_words: int = 8) -> str:
         keywords = words
     return " ".join(keywords[:max_words])
 
-def web_search(message: str, max_results: int = 4):
-    """Returns a list of dicts with title, body, href. Empty list on failure."""
-    full = to_keywords(message)
-    short = " ".join(full.split()[:4])
+_last_topic = ""  # the subject of the last standalone question, reused for follow-ups
+
+def build_search_query(message: str) -> str:
+    """Turns a message into a keyword query. For follow-ups like "when was he
+    born?", it adds the topic of the last standalone question so the search
+    has a subject."""
+    global _last_topic
+    own = to_keywords(message)
+    lowered = message.lower().strip()
+    words = {w.strip("?.,!") for w in lowered.split()}
+    is_followup = bool(words & PRONOUNS) or lowered.startswith(FOLLOWUP_STARTS)
+
+    if is_followup and _last_topic:
+        merged = []
+        for w in (_last_topic + " " + own).split():
+            if w.lower() not in [m.lower() for m in merged]:
+                merged.append(w)
+        query = " ".join(merged[:8])
+        print(f"Follow-up detected: '{message}' -> search '{query}'")
+        return query
+
+    # Standalone question: remember its subject (capitalized words if any)
+    if not is_followup:
+        caps = [w for w in own.split() if w[:1].isupper()]
+        _last_topic = " ".join(caps[:4]) if caps else " ".join(own.split()[:4])
+    return own
+
+def web_search(query: str, max_results: int = 4):
+    """query is already a keyword string. Tries the full query first, then
+    shorter versions of it (the free search source sometimes returns nothing
+    for oddly worded queries). Returns a list of dicts with title, body, href,
+    or an empty list if every attempt fails."""
+    words = query.split()
     candidates = []
-    for q in (full, short):
+    for n in (len(words), 3, 2):
+        q = " ".join(words[:n])
         if q and q not in candidates:
             candidates.append(q)
 
@@ -133,7 +168,7 @@ def web_search(message: str, max_results: int = 4):
                 return results
         except Exception as e:
             print(f"Web search failed for '{q}': {e}")
-        time.sleep(1)
+        time.sleep(2)
     return []
 
 def format_search_context(results) -> str:
@@ -183,7 +218,7 @@ def prepare(payload: ChatIn):
         model = AUTO_MODEL
         options = {"num_predict": AUTO_MAX_TOKENS}
     elif payload.mode == "general":
-        results = web_search(payload.message)
+        results = web_search(build_search_query(payload.message))
         system = GENERAL_PROMPT
         if results:
             system += (
@@ -217,8 +252,9 @@ def chat_page():
 
 @app.post("/chat/clear")
 def clear_chat():
-    global _history
+    global _history, _last_topic
     _history = []
+    _last_topic = ""
     return {"status": "cleared"}
 
 # Non-streaming version (waits for the full answer). Kept for testing in /docs.
