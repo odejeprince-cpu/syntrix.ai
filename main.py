@@ -1,7 +1,12 @@
 import re
+import sqlite3
 import time
+import uuid
+from contextlib import closing
+from datetime import datetime, timezone
+from typing import Optional
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -30,7 +35,6 @@ AUTO_MAX_TOKENS = 350
 GENERAL_MAX_TOKENS = 300
 
 # How long Ollama keeps a model in RAM after its last use ("30m", "2h", or -1 = never unload).
-# Ollama's default is 5 minutes. Keeping it loaded avoids a 10-30 second reload after a pause.
 KEEP_ALIVE = "30m"
 
 CUT_OFF_NOTE = "\n\n(Answer cut short to save time. Reply \"continue\" to get the rest.)"
@@ -104,13 +108,97 @@ _embedder = SentenceTransformer("all-MiniLM-L6-v2")
 _chroma = chromadb.PersistentClient(path="chroma_db")
 _amck = _chroma.get_collection("amck")
 print(f"RAG ready: {_amck.count()} automotive Q&A pairs indexed.")
-print("Syntrix follow-up search build v10 loaded")
 
 def retrieve_context(query: str, k: int = 3) -> str:
     emb = _embedder.encode([query]).tolist()
     res = _amck.query(query_embeddings=emb, n_results=k)
     docs = res.get("documents", [[]])[0]
     return "\n\n".join(docs)
+
+# --- Chat storage (SQLite: one file, built into Python, no install) ---
+DB_PATH = "syntrix.db"
+HISTORY_LIMIT = 10  # how many recent messages the model gets as memory
+
+def db():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON")
+    return conn
+
+def init_db():
+    with closing(db()) as conn, conn:
+        conn.executescript("""
+            CREATE TABLE IF NOT EXISTS chats (
+                id TEXT PRIMARY KEY,
+                title TEXT NOT NULL,
+                mode TEXT NOT NULL,
+                topic TEXT NOT NULL DEFAULT '',
+                created TEXT NOT NULL,
+                updated TEXT NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                chat_id TEXT NOT NULL,
+                role TEXT NOT NULL,
+                content TEXT NOT NULL,   -- what the model sees as memory
+                display TEXT NOT NULL,   -- what the page shows (adds warnings, sources)
+                created TEXT NOT NULL,
+                FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE
+            );
+            CREATE INDEX IF NOT EXISTS idx_messages_chat ON messages(chat_id, id);
+        """)
+
+def now() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+def make_title(text: str) -> str:
+    one_line = " ".join(text.split())
+    return one_line if len(one_line) <= 45 else one_line[:44].rstrip() + "…"
+
+def get_or_create_chat(chat_id: Optional[str], first_message: str, mode: str) -> str:
+    with closing(db()) as conn, conn:
+        if chat_id:
+            row = conn.execute("SELECT id FROM chats WHERE id = ?", (chat_id,)).fetchone()
+            if row:
+                return chat_id
+        new_id = uuid.uuid4().hex[:12]
+        t = now()
+        conn.execute(
+            "INSERT INTO chats (id, title, mode, created, updated) VALUES (?, ?, ?, ?, ?)",
+            (new_id, make_title(first_message), mode, t, t),
+        )
+        return new_id
+
+def load_context(chat_id: str):
+    with closing(db()) as conn:
+        rows = conn.execute(
+            "SELECT role, content FROM messages "
+            "WHERE chat_id = ? AND content != '' ORDER BY id DESC LIMIT ?",
+            (chat_id, HISTORY_LIMIT),
+        ).fetchall()
+    return [{"role": r["role"], "content": r["content"]} for r in reversed(rows)]
+
+def get_topic(chat_id: str) -> str:
+    with closing(db()) as conn:
+        row = conn.execute("SELECT topic FROM chats WHERE id = ?", (chat_id,)).fetchone()
+    return row["topic"] if row else ""
+
+def set_topic(chat_id: str, topic: str):
+    with closing(db()) as conn, conn:
+        conn.execute("UPDATE chats SET topic = ? WHERE id = ?", (topic, chat_id))
+
+def add_message(chat_id: str, role: str, content: str, display: str, mode: str):
+    t = now()
+    with closing(db()) as conn, conn:
+        conn.execute(
+            "INSERT INTO messages (chat_id, role, content, display, created) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (chat_id, role, content, display, t),
+        )
+        conn.execute("UPDATE chats SET updated = ?, mode = ? WHERE id = ?", (t, mode, chat_id))
+
+init_db()
+print("Syntrix chat-history build v11 loaded")
 
 # --- Web search (free, no API key) ---
 def to_keywords(message: str, max_words: int = 8) -> str:
@@ -121,32 +209,29 @@ def to_keywords(message: str, max_words: int = 8) -> str:
         keywords = words
     return " ".join(keywords[:max_words])
 
-_last_topic = ""  # the subject of the last standalone question, reused for follow-ups
-
-def build_search_query(message: str) -> str:
+def build_search_query(message: str, topic: str):
     """Turns a message into a keyword query. For follow-ups like "when was he
-    born?", it adds the topic of the last standalone question so the search
-    has a subject."""
-    global _last_topic
+    born?", adds the topic of this chat's last standalone question.
+    Returns (query, topic)."""
     own = to_keywords(message)
     lowered = message.lower().strip()
     words = {w.strip("?.,!") for w in lowered.split()}
     is_followup = bool(words & PRONOUNS) or lowered.startswith(FOLLOWUP_STARTS)
 
-    if is_followup and _last_topic:
+    if is_followup and topic:
         merged = []
-        for w in (_last_topic + " " + own).split():
+        for w in (topic + " " + own).split():
             if w.lower() not in [m.lower() for m in merged]:
                 merged.append(w)
         query = " ".join(merged[:8])
         print(f"Follow-up detected: '{message}' -> search '{query}'")
-        return query
+        return query, topic
 
     # Standalone question: remember its subject (capitalized words if any)
     if not is_followup:
         caps = [w for w in own.split() if w[:1].isupper()]
-        _last_topic = " ".join(caps[:4]) if caps else " ".join(own.split()[:4])
-    return own
+        topic = " ".join(caps[:4]) if caps else " ".join(own.split()[:4])
+    return own, topic
 
 def web_search(query: str, max_results: int = 4):
     """query is already a keyword string. Tries the full query first, then
@@ -189,26 +274,16 @@ def format_sources(results) -> str:
         return ""
     return "\n\nSources:\n" + "\n".join(lines)
 
-# --- Conversation memory ---
-HISTORY_LIMIT = 10
-_history = []
-
+# --- Request model and answer preparation ---
 class ChatIn(BaseModel):
     message: str
     mode: str = "code"
+    chat_id: Optional[str] = None
 
-def save_to_history(user_text: str, reply: str):
-    """Keeps only the last HISTORY_LIMIT messages (no warnings or sources)."""
-    global _history
-    _history.append({"role": "user", "content": user_text})
-    _history.append({"role": "assistant", "content": reply})
-    if len(_history) > HISTORY_LIMIT:
-        _history = _history[-HISTORY_LIMIT:]
-
-def prepare(payload: ChatIn):
-    """Does everything that happens BEFORE the model starts writing:
-    picks the model, gathers RAG / web context, builds the messages list.
-    Returns (model, messages, options, warning_text, sources_text)."""
+def prepare(payload: ChatIn, history, topic: str):
+    """Everything that happens BEFORE the model starts writing: picks the model,
+    gathers RAG / web context, builds the messages list.
+    Returns (model, messages, options, warning_text, sources_text, topic)."""
     sources_text = ""
     warning_text = ""
 
@@ -218,7 +293,8 @@ def prepare(payload: ChatIn):
         model = AUTO_MODEL
         options = {"num_predict": AUTO_MAX_TOKENS}
     elif payload.mode == "general":
-        results = web_search(build_search_query(payload.message))
+        query, topic = build_search_query(payload.message, topic)
+        results = web_search(query)
         system = GENERAL_PROMPT
         if results:
             system += (
@@ -238,10 +314,11 @@ def prepare(payload: ChatIn):
         options = {"num_predict": CODE_MAX_TOKENS}
 
     messages = [{"role": "system", "content": system}]
-    messages.extend(_history[-HISTORY_LIMIT:])
+    messages.extend(history)
     messages.append({"role": "user", "content": payload.message})
-    return model, messages, options, warning_text, sources_text
+    return model, messages, options, warning_text, sources_text, topic
 
+# --- Pages and history API ---
 @app.get("/")
 def home():
     return {"message": "Hello from Syntrix"}
@@ -252,37 +329,93 @@ def chat_page():
 
 @app.post("/chat/clear")
 def clear_chat():
-    global _history, _last_topic
-    _history = []
-    _last_topic = ""
-    return {"status": "cleared"}
+    # Kept so older pages do not break. The page now starts a new saved chat instead.
+    return {"status": "ok"}
 
-# Non-streaming version (waits for the full answer). Kept for testing in /docs.
+@app.get("/api/chats")
+def list_chats():
+    with closing(db()) as conn:
+        rows = conn.execute(
+            "SELECT id, title, mode, updated FROM chats ORDER BY updated DESC LIMIT 200"
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+@app.get("/api/chats/{chat_id}")
+def get_chat(chat_id: str):
+    with closing(db()) as conn:
+        chat = conn.execute(
+            "SELECT id, title, mode FROM chats WHERE id = ?", (chat_id,)
+        ).fetchone()
+        if not chat:
+            raise HTTPException(status_code=404, detail="Chat not found")
+        rows = conn.execute(
+            "SELECT role, display FROM messages WHERE chat_id = ? ORDER BY id", (chat_id,)
+        ).fetchall()
+    return {
+        "id": chat["id"],
+        "title": chat["title"],
+        "mode": chat["mode"],
+        "messages": [{"role": r["role"], "text": r["display"]} for r in rows],
+    }
+
+@app.delete("/api/chats/{chat_id}")
+def delete_chat(chat_id: str):
+    with closing(db()) as conn, conn:
+        conn.execute("DELETE FROM messages WHERE chat_id = ?", (chat_id,))
+        conn.execute("DELETE FROM chats WHERE id = ?", (chat_id,))
+    return {"status": "deleted"}
+
+# --- Chat endpoints ---
+# Non-streaming version (waits for the full answer). Handy for testing in /docs.
 @app.post("/chat")
 def chat_reply(payload: ChatIn):
+    chat_id = get_or_create_chat(payload.chat_id, payload.message, payload.mode)
     try:
-        model, messages, options, warning_text, sources_text = prepare(payload)
+        history = load_context(chat_id)
+        model, messages, options, warning_text, sources_text, topic = prepare(
+            payload, history, get_topic(chat_id)
+        )
+        set_topic(chat_id, topic)
+        add_message(chat_id, "user", payload.message, payload.message, payload.mode)
+
         resp = ollama.chat(
             model=model, messages=messages, options=options, keep_alive=KEEP_ALIVE
         )
         reply = resp["message"]["content"]
-        save_to_history(payload.message, reply)
         cut = CUT_OFF_NOTE if getattr(resp, "done_reason", None) == "length" else ""
-        return {"reply": warning_text + reply + cut + sources_text}
+        shown = warning_text + reply + cut + sources_text
+        add_message(chat_id, "assistant", reply, shown, payload.mode)
+        return {"reply": shown, "chat_id": chat_id}
     except Exception as e:
-        return {"reply": f"⚠️ AI error: {e}"}
+        return {"reply": f"⚠️ AI error: {e}", "chat_id": chat_id}
 
 # Streaming version: sends the answer piece by piece as the model writes it.
+# The chat id travels back in the X-Chat-Id response header.
 @app.post("/chat/stream")
 def chat_stream(payload: ChatIn):
+    chat_id = get_or_create_chat(payload.chat_id, payload.message, payload.mode)
+    history = load_context(chat_id)
+    topic = get_topic(chat_id)
+
     def generate():
+        shown = ""
+        reply = ""
+
+        def emit(text):
+            nonlocal shown
+            shown += text
+            return text
+
         try:
-            model, messages, options, warning_text, sources_text = prepare(payload)
+            add_message(chat_id, "user", payload.message, payload.message, payload.mode)
+            model, messages, options, warning_text, sources_text, new_topic = prepare(
+                payload, history, topic
+            )
+            set_topic(chat_id, new_topic)
 
             if warning_text:
-                yield warning_text
+                yield emit(warning_text)
 
-            reply = ""
             cut_off = False
             for chunk in ollama.chat(
                 model=model, messages=messages, options=options,
@@ -291,21 +424,27 @@ def chat_stream(payload: ChatIn):
                 piece = chunk["message"]["content"]
                 if piece:
                     reply += piece
-                    yield piece
+                    yield emit(piece)
                 if getattr(chunk, "done_reason", None) == "length":
                     cut_off = True
 
-            save_to_history(payload.message, reply)
-
             if cut_off:
-                yield CUT_OFF_NOTE
+                yield emit(CUT_OFF_NOTE)
             if sources_text:
-                yield sources_text
+                yield emit(sources_text)
         except Exception as e:
-            yield f"\n\n⚠️ AI error: {e}"
+            yield emit(f"\n\n⚠️ AI error: {e}")
+        finally:
+            # Also runs if the browser disconnects, so partial answers are kept.
+            if shown:
+                add_message(chat_id, "assistant", reply, shown, payload.mode)
 
     return StreamingResponse(
         generate(),
         media_type="text/plain; charset=utf-8",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+            "X-Chat-Id": chat_id,
+        },
     )
