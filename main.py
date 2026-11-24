@@ -23,17 +23,33 @@ CODE_MODEL = "qwen2.5-coder:1.5b"
 AUTO_MODEL = "qwen2.5:3b"
 GENERAL_MODEL = "qwen2.5:7b"
 
+# --- Answer length limits (in tokens; about 3 tokens = 2 words) ---
+# Lower number = faster answers. Raise a number if replies get cut off too often.
+CODE_MAX_TOKENS = 700
+AUTO_MAX_TOKENS = 350
+GENERAL_MAX_TOKENS = 300
+
+# How long Ollama keeps a model in RAM after its last use ("30m", "2h", or -1 = never unload).
+# Ollama's default is 5 minutes. Keeping it loaded avoids a 10-30 second reload after a pause.
+KEEP_ALIVE = "30m"
+
+CUT_OFF_NOTE = "\n\n(Answer cut short to save time. Reply \"continue\" to get the rest.)"
+
 CODE_PROMPT = (
     "You are Syntrix, an expert programming assistant. "
     "Answer clearly. Return code in fenced blocks with the language tag. "
-    "When debugging, explain the root cause before the fix."
+    "When debugging, explain the root cause before the fix. "
+    "Be concise: give a short explanation and only the code that is needed. "
+    "Write more only if the user asks for detail."
 )
 
 AUTO_PROMPT = (
     "You are Syntrix Auto, an expert automotive mechanical engineer. "
     "Use the provided reference context when relevant. "
     "If the context does not contain the answer, say so and give your best "
-    "general engineering reasoning. Be precise and practical."
+    "general engineering reasoning. Be precise and practical. "
+    "Be concise: answer in about 120 words or fewer, using short sentences. "
+    "Write more only if the user asks for detail."
 )
 
 GENERAL_PROMPT = (
@@ -46,7 +62,9 @@ GENERAL_PROMPT = (
     "numbers, and dates exactly as written in the results. Do not combine "
     "or rearrange details across results unless they clearly agree. "
     "If the results do not contain the detail asked for, say "
-    "'the sources do not say' instead of guessing. Keep answers concise."
+    "'the sources do not say' instead of guessing. "
+    "Be concise: answer in about 100 words or fewer, with no long lists and "
+    "no introduction or summary. Write more only if the user asks for detail."
 )
 
 NO_RESULTS_NOTE = (
@@ -81,7 +99,7 @@ _embedder = SentenceTransformer("all-MiniLM-L6-v2")
 _chroma = chromadb.PersistentClient(path="chroma_db")
 _amck = _chroma.get_collection("amck")
 print(f"RAG ready: {_amck.count()} automotive Q&A pairs indexed.")
-print("Syntrix streaming build v6 loaded")
+print("Syntrix keep-alive build v8 loaded")
 
 def retrieve_context(query: str, k: int = 3) -> str:
     emb = _embedder.encode([query]).tolist()
@@ -158,12 +176,12 @@ def prepare(payload: ChatIn):
     Returns (model, messages, options, warning_text, sources_text)."""
     sources_text = ""
     warning_text = ""
-    options = {}
 
     if payload.mode == "auto":
         context = retrieve_context(payload.message)
         system = AUTO_PROMPT + f"\n\n--- Reference material ---\n{context}\n--- End reference ---"
         model = AUTO_MODEL
+        options = {"num_predict": AUTO_MAX_TOKENS}
     elif payload.mode == "general":
         results = web_search(payload.message)
         system = GENERAL_PROMPT
@@ -178,10 +196,11 @@ def prepare(payload: ChatIn):
             system += NO_RESULTS_NOTE
             warning_text = NO_RESULTS_WARNING
         model = GENERAL_MODEL
-        options = {"temperature": 0.2, "num_ctx": 4096}
+        options = {"temperature": 0.2, "num_ctx": 4096, "num_predict": GENERAL_MAX_TOKENS}
     else:
         system = CODE_PROMPT
         model = CODE_MODEL
+        options = {"num_predict": CODE_MAX_TOKENS}
 
     messages = [{"role": "system", "content": system}]
     messages.extend(_history[-HISTORY_LIMIT:])
@@ -207,10 +226,13 @@ def clear_chat():
 def chat_reply(payload: ChatIn):
     try:
         model, messages, options, warning_text, sources_text = prepare(payload)
-        resp = ollama.chat(model=model, messages=messages, options=options)
+        resp = ollama.chat(
+            model=model, messages=messages, options=options, keep_alive=KEEP_ALIVE
+        )
         reply = resp["message"]["content"]
         save_to_history(payload.message, reply)
-        return {"reply": warning_text + reply + sources_text}
+        cut = CUT_OFF_NOTE if getattr(resp, "done_reason", None) == "length" else ""
+        return {"reply": warning_text + reply + cut + sources_text}
     except Exception as e:
         return {"reply": f"⚠️ AI error: {e}"}
 
@@ -225,16 +247,22 @@ def chat_stream(payload: ChatIn):
                 yield warning_text
 
             reply = ""
+            cut_off = False
             for chunk in ollama.chat(
-                model=model, messages=messages, options=options, stream=True
+                model=model, messages=messages, options=options,
+                stream=True, keep_alive=KEEP_ALIVE,
             ):
                 piece = chunk["message"]["content"]
                 if piece:
                     reply += piece
                     yield piece
+                if getattr(chunk, "done_reason", None) == "length":
+                    cut_off = True
 
             save_to_history(payload.message, reply)
 
+            if cut_off:
+                yield CUT_OFF_NOTE
             if sources_text:
                 yield sources_text
         except Exception as e:
