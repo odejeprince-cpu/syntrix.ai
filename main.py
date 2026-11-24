@@ -1,3 +1,4 @@
+import io
 import re
 import sqlite3
 import time
@@ -6,12 +7,13 @@ from contextlib import closing
 from datetime import datetime, timezone
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import ollama
 import chromadb
+from pypdf import PdfReader
 from sentence_transformers import SentenceTransformer
 
 try:
@@ -36,6 +38,16 @@ GENERAL_MAX_TOKENS = 300
 
 # How long Ollama keeps a model in RAM after its last use ("30m", "2h", or -1 = never unload).
 KEEP_ALIVE = "30m"
+
+# --- File attachment limits ---
+MAX_UPLOAD_BYTES = 5 * 1024 * 1024   # biggest file we accept (5 MB)
+MAX_FILE_CHARS = 6000                # how much of the file the model reads (about 1500 tokens)
+FILE_CTX = 6144                      # model memory size used when a file is attached
+CUT_MARK = "\n[...the rest of the file was cut off...]"
+TEXT_EXTENSIONS = {
+    "txt", "md", "py", "json", "csv", "js", "ts", "html", "css", "log",
+    "yml", "yaml", "xml", "ini", "toml", "sql", "java", "c", "cpp", "h", "sh",
+}
 
 CUT_OFF_NOTE = "\n\n(Answer cut short to save time. Reply \"continue\" to get the rest.)"
 
@@ -146,6 +158,15 @@ def init_db():
                 FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE
             );
             CREATE INDEX IF NOT EXISTS idx_messages_chat ON messages(chat_id, id);
+            CREATE TABLE IF NOT EXISTS files (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                chat_id TEXT NOT NULL,
+                name TEXT NOT NULL,
+                text TEXT NOT NULL,      -- the text we pulled out of the file
+                created TEXT NOT NULL,
+                FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE
+            );
+            CREATE INDEX IF NOT EXISTS idx_files_chat ON files(chat_id, id);
         """)
 
 def now() -> str:
@@ -197,8 +218,65 @@ def add_message(chat_id: str, role: str, content: str, display: str, mode: str):
         )
         conn.execute("UPDATE chats SET updated = ?, mode = ? WHERE id = ?", (t, mode, chat_id))
 
+def save_file(chat_id: str, name: str, text: str):
+    with closing(db()) as conn, conn:
+        conn.execute(
+            "INSERT INTO files (chat_id, name, text, created) VALUES (?, ?, ?, ?)",
+            (chat_id, name, text, now()),
+        )
+
+def get_file(chat_id: str):
+    """Returns (name, text) of the newest file attached to this chat, or None."""
+    with closing(db()) as conn:
+        row = conn.execute(
+            "SELECT name, text FROM files WHERE chat_id = ? ORDER BY id DESC LIMIT 1",
+            (chat_id,),
+        ).fetchone()
+    return (row["name"], row["text"]) if row else None
+
 init_db()
-print("Syntrix chat-history build v11 loaded")
+print("Syntrix attachments build v12 loaded")
+
+# --- Reading uploaded files ---
+def extract_text(name: str, data: bytes):
+    """Pulls plain text out of an uploaded file.
+    Returns (text, was_cut). Raises HTTPException with a friendly message on problems."""
+    ext = name.lower().rsplit(".", 1)[-1] if "." in name else ""
+
+    if ext == "pdf":
+        try:
+            reader = PdfReader(io.BytesIO(data))
+            if reader.is_encrypted:
+                raise HTTPException(status_code=400, detail="That PDF is password-protected, so I cannot read it.")
+            parts, total = [], 0
+            for page in reader.pages:
+                piece = page.extract_text() or ""
+                parts.append(piece)
+                total += len(piece)
+                if total > MAX_FILE_CHARS:   # enough text, stop reading more pages
+                    break
+            text = "\n".join(parts)
+        except HTTPException:
+            raise
+        except Exception:
+            raise HTTPException(status_code=400, detail="I could not open that PDF. It may be damaged.")
+    elif ext in TEXT_EXTENSIONS:
+        text = data.decode("utf-8", errors="replace")
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="That file type is not supported yet. Use a PDF or a text/code file (.txt, .py, .md, .json, .csv...).",
+        )
+
+    text = text.strip()
+    if not text:
+        raise HTTPException(
+            status_code=400,
+            detail="I found no readable text in that file. (A scanned PDF is just pictures, so it has no text to read.)",
+        )
+    if len(text) > MAX_FILE_CHARS:
+        return text[:MAX_FILE_CHARS] + CUT_MARK, True
+    return text, False
 
 # --- Web search (free, no API key) ---
 def to_keywords(message: str, max_words: int = 8) -> str:
@@ -279,10 +357,13 @@ class ChatIn(BaseModel):
     message: str
     mode: str = "code"
     chat_id: Optional[str] = None
+    attachment_name: Optional[str] = None   # set only on the message that attaches a file
+    attachment_text: Optional[str] = None
 
-def prepare(payload: ChatIn, history, topic: str):
+def prepare(payload: ChatIn, history, topic: str, file=None):
     """Everything that happens BEFORE the model starts writing: picks the model,
-    gathers RAG / web context, builds the messages list.
+    gathers RAG / web / file context, builds the messages list.
+    file is (name, text) or None.
     Returns (model, messages, options, warning_text, sources_text, topic)."""
     sources_text = ""
     warning_text = ""
@@ -293,19 +374,21 @@ def prepare(payload: ChatIn, history, topic: str):
         model = AUTO_MODEL
         options = {"num_predict": AUTO_MAX_TOKENS}
     elif payload.mode == "general":
-        query, topic = build_search_query(payload.message, topic)
-        results = web_search(query)
         system = GENERAL_PROMPT
-        if results:
-            system += (
-                "\n\n--- Web search results ---\n"
-                f"{format_search_context(results)}\n"
-                "--- End web search results ---"
-            )
-            sources_text = format_sources(results)
-        else:
-            system += NO_RESULTS_NOTE
-            warning_text = NO_RESULTS_WARNING
+        if not file:
+            # No file attached: search the web as usual
+            query, topic = build_search_query(payload.message, topic)
+            results = web_search(query)
+            if results:
+                system += (
+                    "\n\n--- Web search results ---\n"
+                    f"{format_search_context(results)}\n"
+                    "--- End web search results ---"
+                )
+                sources_text = format_sources(results)
+            else:
+                system += NO_RESULTS_NOTE
+                warning_text = NO_RESULTS_WARNING
         model = GENERAL_MODEL
         options = {"temperature": 0.2, "num_ctx": 4096, "num_predict": GENERAL_MAX_TOKENS}
     else:
@@ -313,10 +396,28 @@ def prepare(payload: ChatIn, history, topic: str):
         model = CODE_MODEL
         options = {"num_predict": CODE_MAX_TOKENS}
 
+    if file:
+        fname, ftext = file
+        system += (
+            f"\n\nThe user attached a file named '{fname}'. Use its contents to answer. "
+            "Base your answer on the file, and if the file does not contain the answer, say so.\n"
+            f"--- Attached file: {fname} ---\n{ftext}\n--- End attached file ---"
+        )
+        options["num_ctx"] = FILE_CTX   # bigger memory so the file fits
+
     messages = [{"role": "system", "content": system}]
     messages.extend(history)
     messages.append({"role": "user", "content": payload.message})
     return model, messages, options, warning_text, sources_text, topic
+
+def attach_if_new(chat_id: str, payload: ChatIn) -> str:
+    """If this message carries a newly attached file, saves it for the chat.
+    Returns the text the chat window should show for the user's message."""
+    if payload.attachment_text and payload.attachment_name:
+        name = payload.attachment_name[:120]
+        save_file(chat_id, name, payload.attachment_text[: MAX_FILE_CHARS + len(CUT_MARK)])
+        return f"📎 {name}\n{payload.message}"
+    return payload.message
 
 # --- Pages and history API ---
 @app.get("/")
@@ -331,6 +432,18 @@ def chat_page():
 def clear_chat():
     # Kept so older pages do not break. The page now starts a new saved chat instead.
     return {"status": "ok"}
+
+@app.post("/api/upload")
+def upload_file(file: UploadFile = File(...)):
+    """Receives a file from the page, reads the text out of it, and sends the text
+    back. The text is saved with the chat later, when the user sends their message."""
+    data = file.file.read(MAX_UPLOAD_BYTES + 1)
+    if len(data) > MAX_UPLOAD_BYTES:
+        raise HTTPException(status_code=400, detail="That file is too big. The limit is 5 MB.")
+    name = file.filename or "file"
+    text, was_cut = extract_text(name, data)
+    print(f"Upload: '{name}' -> {len(text)} characters (cut: {was_cut})")
+    return {"name": name, "text": text, "was_cut": was_cut, "chars": len(text)}
 
 @app.get("/api/chats")
 def list_chats():
@@ -362,6 +475,7 @@ def get_chat(chat_id: str):
 def delete_chat(chat_id: str):
     with closing(db()) as conn, conn:
         conn.execute("DELETE FROM messages WHERE chat_id = ?", (chat_id,))
+        conn.execute("DELETE FROM files WHERE chat_id = ?", (chat_id,))
         conn.execute("DELETE FROM chats WHERE id = ?", (chat_id,))
     return {"status": "deleted"}
 
@@ -371,12 +485,13 @@ def delete_chat(chat_id: str):
 def chat_reply(payload: ChatIn):
     chat_id = get_or_create_chat(payload.chat_id, payload.message, payload.mode)
     try:
+        user_display = attach_if_new(chat_id, payload)
         history = load_context(chat_id)
         model, messages, options, warning_text, sources_text, topic = prepare(
-            payload, history, get_topic(chat_id)
+            payload, history, get_topic(chat_id), get_file(chat_id)
         )
         set_topic(chat_id, topic)
-        add_message(chat_id, "user", payload.message, payload.message, payload.mode)
+        add_message(chat_id, "user", payload.message, user_display, payload.mode)
 
         resp = ollama.chat(
             model=model, messages=messages, options=options, keep_alive=KEEP_ALIVE
@@ -394,8 +509,10 @@ def chat_reply(payload: ChatIn):
 @app.post("/chat/stream")
 def chat_stream(payload: ChatIn):
     chat_id = get_or_create_chat(payload.chat_id, payload.message, payload.mode)
+    user_display = attach_if_new(chat_id, payload)
     history = load_context(chat_id)
     topic = get_topic(chat_id)
+    file = get_file(chat_id)
 
     def generate():
         shown = ""
@@ -407,9 +524,9 @@ def chat_stream(payload: ChatIn):
             return text
 
         try:
-            add_message(chat_id, "user", payload.message, payload.message, payload.mode)
+            add_message(chat_id, "user", payload.message, user_display, payload.mode)
             model, messages, options, warning_text, sources_text, new_topic = prepare(
-                payload, history, topic
+                payload, history, topic, file
             )
             set_topic(chat_id, new_topic)
 
