@@ -324,9 +324,20 @@ async function send(){
   input.value = ''; input.style.height = '24px';
   const wait = add('b', '<span class="think"><i></i><i></i><i></i></span>');
   try {
-    const r = await fetch('/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: text, mode }) });
-    const data = await r.json();
-    wait.innerHTML = render(data.reply || 'No reply came back from the model.');
+    const r = await fetch('/chat/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: text, mode }) });
+    if (!r.ok || !r.body) throw new Error('bad response');
+    const reader = r.body.getReader();
+    const dec = new TextDecoder();
+    let full = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      full += dec.decode(value, { stream: true });
+      wait.innerHTML = render(full);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+    full += dec.decode();
+    wait.innerHTML = render(full || 'No reply came back from the model.');
   } catch (e) {
     wait.innerHTML = 'Could not reach the Syntrix server. Check that it is running, then try again.';
   }
