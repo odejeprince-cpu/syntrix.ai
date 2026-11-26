@@ -181,15 +181,17 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 30px rgba(60,80,160,.18)}
 [data-theme="light"] .card{background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(235,240,255,.55))}
 
-/* ---- History panel ---- */
-.hist{position:absolute;left:14px;top:96px;bottom:100px;width:330px;z-index:7;display:flex;flex-direction:column;border-radius:22px;padding:16px 12px 12px;
+/* ---- History + Settings panels (same frosted look) ---- */
+.hist,.settings{position:absolute;left:14px;top:96px;width:330px;z-index:7;display:flex;flex-direction:column;border-radius:22px;padding:16px 12px 12px;
   background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.04)),rgba(10,14,40,.85);
   -webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%);
   border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 20px 50px rgba(0,0,0,.5);
   transform:translateX(-12px);opacity:0;visibility:hidden;transition:transform .22s,opacity .22s,visibility .22s}
-.hist.open{transform:none;opacity:1;visibility:visible}
-.hist header{display:flex;align-items:center;justify-content:space-between;padding:0 8px 10px;font-weight:600;font-size:16px}
-.hist header button{color:var(--muted);padding:4px;border-radius:8px}
+.hist{bottom:100px}
+.settings{max-height:calc(100% - 130px);overflow-y:auto}
+.hist.open,.settings.open{transform:none;opacity:1;visibility:visible}
+.hist header,.settings header{display:flex;align-items:center;justify-content:space-between;padding:0 8px 10px;font-weight:600;font-size:16px}
+.hist header button,.settings header button{color:var(--muted);padding:4px;border-radius:8px}
 .hist ul{list-style:none;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
 .hist li{display:flex;align-items:center;gap:4px;border-radius:14px;border:1px solid transparent}
 .hist li:hover{background:rgba(255,255,255,.07)}
@@ -201,7 +203,24 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 .hist .del:hover{color:#ff7a8a;background:rgba(255,90,110,.12)}
 .hist .del .i{width:18px;height:18px}
 .hist .empty{padding:18px 12px;color:var(--muted);font-size:14px;line-height:1.5}
-[data-theme="light"] .hist{background:rgba(255,255,255,.92)}
+[data-theme="light"] .hist,[data-theme="light"] .settings{background:rgba(255,255,255,.92)}
+
+/* ---- Settings contents ---- */
+.set-row{padding:14px 8px;border-top:1px solid var(--line)}
+.set-row h5{font-size:14px;font-weight:600}
+.set-row p{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
+.set-line{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.seg{display:flex;margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:3px;gap:2px}
+.seg button{flex:1;padding:8px 6px;border-radius:9px;font-size:13.5px;color:var(--muted);transition:all .2s}
+.seg button:hover{color:var(--text)}
+.seg button.on{color:#fff;background:linear-gradient(180deg,rgba(90,150,255,.55),rgba(47,107,255,.28));box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.sw{position:relative;width:48px;height:28px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid var(--line);flex:none;transition:background .2s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s}
+.sw.on{background:linear-gradient(135deg,#3b82f6,#8a4dff)}
+.sw.on::after{transform:translateX(20px)}
+[data-theme="light"] .sw:not(.on){background:rgba(80,100,200,.25)}
+.danger{margin-top:12px;width:100%;padding:10px;border-radius:12px;border:1px solid rgba(255,90,110,.5);color:#ff7a8a;font-size:14px;transition:background .2s}
+.danger:hover{background:rgba(255,90,110,.14)}
 
 /* ---- Collapsible sidebar ---- */
 .side{transition:margin-left .3s ease,opacity .25s ease,visibility .3s}
@@ -258,7 +277,7 @@ body.side-closed .side{margin-left:-250px;opacity:0;visibility:hidden;pointer-ev
     <button class="primary" id="newChat"><svg class="i"><use href="#i-chat"/></svg>New Chat</button>
     <button id="histBtn"><svg class="i"><use href="#i-history"/></svg>History</button>
     <button data-soon="Saved Chats"><svg class="i"><use href="#i-bookmark"/></svg>Saved Chats</button>
-    <button data-soon="Settings"><svg class="i"><use href="#i-gear"/></svg>Settings</button>
+    <button id="setBtn"><svg class="i"><use href="#i-gear"/></svg>Settings</button>
     <button data-soon="About"><svg class="i"><use href="#i-info"/></svg>About</button>
   </nav>
   <div class="powered"><b><svg class="i"><use href="#i-bolt"/></svg>Powered by AI</b><small>Ask. Learn. Build. Explore.</small></div>
@@ -304,6 +323,44 @@ body.side-closed .side{margin-left:-250px;opacity:0;visibility:hidden;pointer-ev
     <ul id="histList"></ul>
   </aside>
 
+  <aside class="settings" id="settings" aria-label="Settings" aria-hidden="true">
+    <header>Settings<button id="setClose" aria-label="Close settings"><svg class="i"><use href="#i-x"/></svg></button></header>
+
+    <div class="set-row">
+      <h5>Answer length</h5>
+      <p>Short is faster. Long is more detailed but much slower on this computer.</p>
+      <div class="seg" role="group" aria-label="Answer length">
+        <button data-length="short">Short</button>
+        <button data-length="normal">Normal</button>
+        <button data-length="long">Long</button>
+      </div>
+    </div>
+
+    <div class="set-row">
+      <div class="set-line">
+        <div>
+          <h5>Web search</h5>
+          <p>General mode only. Turn off for math and concept questions to save a few seconds.</p>
+        </div>
+        <button class="sw" id="webSw" role="switch" aria-checked="true" aria-label="Web search in General mode"></button>
+      </div>
+    </div>
+
+    <div class="set-row">
+      <h5>Theme</h5>
+      <div class="seg" role="group" aria-label="Theme">
+        <button data-theme-opt="dark">Dark</button>
+        <button data-theme-opt="light">Light</button>
+      </div>
+    </div>
+
+    <div class="set-row">
+      <h5>Clear all chats</h5>
+      <p>Deletes every saved chat and attached file. This cannot be undone.</p>
+      <button class="danger" id="clearAll">Clear all chats</button>
+    </div>
+  </aside>
+
   <div class="bar">
     <div class="attach" id="attach"></div>
     <div class="field">
@@ -340,9 +397,50 @@ document.querySelectorAll('.tab').forEach(b => b.onclick = () => setMode(b.datas
 document.querySelectorAll('.card').forEach(b => b.onclick = () => { setMode(b.dataset.mode); input.focus(); });
 document.querySelectorAll('[data-soon]').forEach(b => b.onclick = () => toast(b.dataset.soon + ' is coming soon.'));
 
+/* ---- Settings (saved in this browser) ---- */
+const SKEY = 'syntrix-settings';
+const settings = { length: 'normal', web: true, theme: 'dark' };
+try {
+  const saved = JSON.parse(localStorage.getItem(SKEY) || '{}');
+  if (['short', 'normal', 'long'].includes(saved.length)) settings.length = saved.length;
+  if (typeof saved.web === 'boolean') settings.web = saved.web;
+  if (['dark', 'light'].includes(saved.theme)) settings.theme = saved.theme;
+} catch (e) {}
+
+const webSw = $('#webSw');
+function saveSettings(){ try { localStorage.setItem(SKEY, JSON.stringify(settings)); } catch (e) {} }
+function applySettings(){
+  document.documentElement.dataset.theme = settings.theme;
+  document.querySelectorAll('[data-length]').forEach(b => b.classList.toggle('on', b.dataset.length === settings.length));
+  document.querySelectorAll('[data-theme-opt]').forEach(b => b.classList.toggle('on', b.dataset.themeOpt === settings.theme));
+  webSw.classList.toggle('on', settings.web);
+  webSw.setAttribute('aria-checked', String(settings.web));
+}
+applySettings();
+
+document.querySelectorAll('[data-length]').forEach(b => b.onclick = () => {
+  settings.length = b.dataset.length; saveSettings(); applySettings();
+  toast('Answer length: ' + b.textContent);
+});
+document.querySelectorAll('[data-theme-opt]').forEach(b => b.onclick = () => {
+  settings.theme = b.dataset.themeOpt; saveSettings(); applySettings();
+});
+webSw.onclick = () => {
+  settings.web = !settings.web; saveSettings(); applySettings();
+  toast('Web search is ' + (settings.web ? 'on' : 'off') + ' (General mode)');
+};
 $('#theme').onclick = () => {
-  const r = document.documentElement;
-  r.dataset.theme = r.dataset.theme === 'dark' ? 'light' : 'dark';
+  settings.theme = settings.theme === 'dark' ? 'light' : 'dark'; saveSettings(); applySettings();
+};
+$('#clearAll').onclick = async () => {
+  if (busy) { toast('Wait for the current answer to finish.'); return; }
+  if (!confirm('Delete ALL chats and attached files? This cannot be undone.')) return;
+  try {
+    const r = await fetch('/api/chats', { method: 'DELETE' });
+    if (!r.ok) throw new Error('failed');
+    newChat(); closeSettings();
+    toast('All chats cleared.');
+  } catch (e) { toast('Could not clear the chats.'); }
 };
 
 /* ---- Sidebar open / close (remembers your choice) ---- */
@@ -430,7 +528,7 @@ async function send(){
   app.classList.add('chatting');
   add('u', esc((att ? '📎 ' + att.name + '\n' : '') + text).replace(/\n/g, '<br>'));
   input.value = ''; input.style.height = '24px';
-  const body = { message: text, mode, chat_id: chatId };
+  const body = { message: text, mode, chat_id: chatId, length: settings.length, use_web: settings.web };
   if (att) { body.attachment_name = att.name; body.attachment_text = att.text; }
   clearAttachment();
   const wait = add('b', '<span class="think"><i></i><i></i><i></i></span>');
@@ -474,11 +572,23 @@ const hist = $('#hist'), histList = $('#histList');
 const MODE_NAMES = { auto: 'AutoMobile', code: 'Programming', general: 'General' };
 const histOpen = () => hist.classList.contains('open');
 function closeHist(){ hist.classList.remove('open'); hist.setAttribute('aria-hidden', 'true'); }
-async function openHist(){ hist.classList.add('open'); hist.setAttribute('aria-hidden', 'false'); await loadList(); }
+async function openHist(){ closeSettings(); hist.classList.add('open'); hist.setAttribute('aria-hidden', 'false'); await loadList(); }
 $('#histBtn').onclick = () => histOpen() ? closeHist() : openHist();
 $('#histClose').onclick = closeHist;
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeHist(); });
-document.addEventListener('click', e => { if (histOpen() && !hist.contains(e.target) && !$('#histBtn').contains(e.target)) closeHist(); });
+
+/* ---- Settings panel open / close ---- */
+const settingsPanel = $('#settings');
+const settingsOpen = () => settingsPanel.classList.contains('open');
+function closeSettings(){ settingsPanel.classList.remove('open'); settingsPanel.setAttribute('aria-hidden', 'true'); }
+function openSettings(){ closeHist(); settingsPanel.classList.add('open'); settingsPanel.setAttribute('aria-hidden', 'false'); }
+$('#setBtn').onclick = () => settingsOpen() ? closeSettings() : openSettings();
+$('#setClose').onclick = closeSettings;
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeHist(); closeSettings(); } });
+document.addEventListener('click', e => {
+  if (histOpen() && !hist.contains(e.target) && !$('#histBtn').contains(e.target)) closeHist();
+  if (settingsOpen() && !settingsPanel.contains(e.target) && !$('#setBtn').contains(e.target)) closeSettings();
+});
 
 function fmtDate(iso){
   const d = new Date(iso), now = new Date();

@@ -31,10 +31,25 @@ AUTO_MODEL = "qwen2.5:3b"
 GENERAL_MODEL = "qwen2.5:7b"
 
 # --- Answer length limits (in tokens; about 3 tokens = 2 words) ---
+# These are the "Normal" settings. Short and Long (chosen in Settings) scale them.
 # Lower number = faster answers. Raise a number if replies get cut off too often.
 CODE_MAX_TOKENS = 700
 AUTO_MAX_TOKENS = 350
 GENERAL_MAX_TOKENS = 300
+
+# Settings > Answer length: short = half the tokens, long = double
+LENGTH_SCALE = {"short": 0.5, "normal": 1.0, "long": 2.0}
+LENGTH_HINTS = {
+    "short": "\n\nThe user wants very short answers. Keep your answer to a few sentences.",
+    "normal": "",
+    "long": (
+        "\n\nThe user wants a more detailed answer this time. Ignore any earlier "
+        "instruction to be brief. Explain fully, with steps or examples where helpful."
+    ),
+}
+
+def scaled(base: int, length: str) -> int:
+    return max(100, int(base * LENGTH_SCALE.get(length, 1.0)))
 
 # How long Ollama keeps a model in RAM after its last use ("30m", "2h", or -1 = never unload).
 KEEP_ALIVE = "30m"
@@ -94,6 +109,13 @@ NO_RESULTS_NOTE = (
 NO_RESULTS_WARNING = (
     "⚠️ Web search returned no results, so this answer is from the model's "
     "memory only and may be wrong. Try rephrasing with fewer words.\n\n"
+)
+
+# Used when the user switched web search OFF in Settings
+SEARCH_OFF_NOTE = (
+    "\n\nWeb search is turned off, so answer from your own knowledge. For specific "
+    "facts about people, events, numbers, names, or dates that you are not sure of, "
+    "say honestly that you could not verify them."
 )
 
 # Filler words removed when turning a question into search keywords
@@ -235,7 +257,7 @@ def get_file(chat_id: str):
     return (row["name"], row["text"]) if row else None
 
 init_db()
-print("Syntrix attachments build v12 loaded")
+print("Syntrix settings build v13 loaded")
 
 # --- Reading uploaded files ---
 def extract_text(name: str, data: bytes):
@@ -359,6 +381,8 @@ class ChatIn(BaseModel):
     chat_id: Optional[str] = None
     attachment_name: Optional[str] = None   # set only on the message that attaches a file
     attachment_text: Optional[str] = None
+    length: str = "normal"                  # Settings: "short", "normal" or "long"
+    use_web: bool = True                    # Settings: web search on/off (General mode)
 
 def prepare(payload: ChatIn, history, topic: str, file=None):
     """Everything that happens BEFORE the model starts writing: picks the model,
@@ -367,34 +391,40 @@ def prepare(payload: ChatIn, history, topic: str, file=None):
     Returns (model, messages, options, warning_text, sources_text, topic)."""
     sources_text = ""
     warning_text = ""
+    length = payload.length if payload.length in LENGTH_SCALE else "normal"
 
     if payload.mode == "auto":
         context = retrieve_context(payload.message)
         system = AUTO_PROMPT + f"\n\n--- Reference material ---\n{context}\n--- End reference ---"
         model = AUTO_MODEL
-        options = {"num_predict": AUTO_MAX_TOKENS}
+        options = {"num_predict": scaled(AUTO_MAX_TOKENS, length)}
     elif payload.mode == "general":
         system = GENERAL_PROMPT
         if not file:
-            # No file attached: search the web as usual
-            query, topic = build_search_query(payload.message, topic)
-            results = web_search(query)
-            if results:
-                system += (
-                    "\n\n--- Web search results ---\n"
-                    f"{format_search_context(results)}\n"
-                    "--- End web search results ---"
-                )
-                sources_text = format_sources(results)
+            if payload.use_web:
+                # No file attached and search is on: search the web as usual
+                query, topic = build_search_query(payload.message, topic)
+                results = web_search(query)
+                if results:
+                    system += (
+                        "\n\n--- Web search results ---\n"
+                        f"{format_search_context(results)}\n"
+                        "--- End web search results ---"
+                    )
+                    sources_text = format_sources(results)
+                else:
+                    system += NO_RESULTS_NOTE
+                    warning_text = NO_RESULTS_WARNING
             else:
-                system += NO_RESULTS_NOTE
-                warning_text = NO_RESULTS_WARNING
+                # Web search switched off in Settings
+                system += SEARCH_OFF_NOTE
         model = GENERAL_MODEL
-        options = {"temperature": 0.2, "num_ctx": 4096, "num_predict": GENERAL_MAX_TOKENS}
+        options = {"temperature": 0.2, "num_ctx": 4096,
+                   "num_predict": scaled(GENERAL_MAX_TOKENS, length)}
     else:
         system = CODE_PROMPT
         model = CODE_MODEL
-        options = {"num_predict": CODE_MAX_TOKENS}
+        options = {"num_predict": scaled(CODE_MAX_TOKENS, length)}
 
     if file:
         fname, ftext = file
@@ -404,6 +434,8 @@ def prepare(payload: ChatIn, history, topic: str, file=None):
             f"--- Attached file: {fname} ---\n{ftext}\n--- End attached file ---"
         )
         options["num_ctx"] = FILE_CTX   # bigger memory so the file fits
+
+    system += LENGTH_HINTS[length]
 
     messages = [{"role": "system", "content": system}]
     messages.extend(history)
@@ -478,6 +510,17 @@ def delete_chat(chat_id: str):
         conn.execute("DELETE FROM files WHERE chat_id = ?", (chat_id,))
         conn.execute("DELETE FROM chats WHERE id = ?", (chat_id,))
     return {"status": "deleted"}
+
+@app.delete("/api/chats")
+def delete_all_chats():
+    """Settings > Clear all chats: wipes every chat, message and saved file."""
+    with closing(db()) as conn, conn:
+        count = conn.execute("SELECT COUNT(*) FROM chats").fetchone()[0]
+        conn.execute("DELETE FROM messages")
+        conn.execute("DELETE FROM files")
+        conn.execute("DELETE FROM chats")
+    print(f"Cleared all chats ({count} deleted)")
+    return {"status": "cleared", "deleted": count}
 
 # --- Chat endpoints ---
 # Non-streaming version (waits for the full answer). Handy for testing in /docs.
