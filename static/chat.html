@@ -198,16 +198,17 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 30px rgba(60,80,160,.18)}
 [data-theme="light"] .card{background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(235,240,255,.55))}
 
-/* ---- Settings panel (frosted) ---- */
-.settings{position:absolute;left:14px;top:96px;width:330px;max-height:calc(100% - 130px);overflow-y:auto;z-index:7;display:flex;flex-direction:column;border-radius:22px;padding:16px 12px 12px;
+/* ---- Settings + About panels (frosted) ---- */
+.settings,.about{position:absolute;left:14px;top:96px;width:330px;max-height:calc(100% - 130px);overflow-y:auto;z-index:7;display:flex;flex-direction:column;border-radius:22px;padding:16px 12px 12px;
   background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.04)),rgba(10,14,40,.85);
   -webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%);
   border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 20px 50px rgba(0,0,0,.5);
-  transform:translateX(-12px);opacity:0;visibility:hidden;transition:transform .22s,opacity .22s,visibility .22s}
-.settings.open{transform:none;opacity:1;visibility:visible}
-.settings header{display:flex;align-items:center;justify-content:space-between;padding:0 8px 10px;font-weight:600;font-size:16px}
-.settings header button{color:var(--muted);padding:4px;border-radius:8px}
-[data-theme="light"] .settings{background:rgba(255,255,255,.92)}
+  transform:translateX(-12px);opacity:0;visibility:hidden;transition:transform .22s,opacity .22s,visibility .22s;scrollbar-width:thin}
+.about{width:400px;max-width:calc(100% - 28px)}
+.settings.open,.about.open{transform:none;opacity:1;visibility:visible}
+.settings header,.about header{display:flex;align-items:center;justify-content:space-between;padding:0 8px 10px;font-weight:600;font-size:16px}
+.settings header button,.about header button{color:var(--muted);padding:4px;border-radius:8px}
+[data-theme="light"] .settings,[data-theme="light"] .about{background:rgba(255,255,255,.92)}
 
 /* ---- Settings contents ---- */
 .set-row{padding:14px 8px;border-top:1px solid var(--line)}
@@ -225,6 +226,20 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 [data-theme="light"] .sw:not(.on){background:rgba(80,100,200,.25)}
 .danger{margin-top:12px;width:100%;padding:10px;border-radius:12px;border:1px solid rgba(255,90,110,.5);color:#ff7a8a;font-size:14px;transition:background .2s}
 .danger:hover{background:rgba(255,90,110,.14)}
+
+/* ---- About contents ---- */
+.about-body{padding:0 8px 6px}
+.about-body h3{font-size:22px;font-weight:700;letter-spacing:-.4px}
+.about-body h3 span{color:#8b5cff}
+.about-body .tag{font-size:12.5px;color:var(--muted);font-style:italic;margin-top:2px}
+.about-body .lead{font-size:13.5px;line-height:1.6;margin-top:12px}
+.about-body h5{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan);margin:18px 0 6px}
+.about-body ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.about-body li{font-size:13px;line-height:1.55;padding-left:16px;position:relative}
+.about-body li::before{content:"";position:absolute;left:2px;top:.62em;width:5px;height:5px;border-radius:50%;background:#8b5cff}
+.about-body p{font-size:13px;line-height:1.6}
+.about-body .note{color:var(--muted)}
+.about-body .credit{margin-top:18px;padding-top:12px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);text-align:center}
 
 /* ---- Collapsible sidebar ---- */
 .side{transition:margin-left .3s ease,opacity .25s ease,visibility .3s}
@@ -284,7 +299,7 @@ body.side-closed .side{margin-left:-250px;opacity:0;visibility:hidden;pointer-ev
 
   <nav class="nav bottom">
     <button id="setBtn"><svg class="i"><use href="#i-gear"/></svg>Settings</button>
-    <button data-soon="About"><svg class="i"><use href="#i-info"/></svg>About</button>
+    <button id="aboutBtn"><svg class="i"><use href="#i-info"/></svg>About</button>
   </nav>
   <div class="powered"><b><svg class="i"><use href="#i-bolt"/></svg>Powered by AI</b><small>Ask. Learn. Build. Explore.</small></div>
 </aside>
@@ -362,6 +377,42 @@ body.side-closed .side{margin-left:-250px;opacity:0;visibility:hidden;pointer-ev
     </div>
   </aside>
 
+  <aside class="about" id="about" aria-label="About Syntrix AI" aria-hidden="true">
+    <header>About<button id="aboutClose" aria-label="Close about"><svg class="i"><use href="#i-x"/></svg></button></header>
+    <div class="about-body">
+      <h3>Syntrix <span>AI</span></h3>
+      <div class="tag">Smarter. Deeper. Always Here.</div>
+
+      <p class="lead">Syntrix AI is a private AI assistant that runs on your own computer. Its language models run locally through Ollama, so there are no subscriptions, no API fees and no accounts. It has three specialist modes, and each one uses the model and the knowledge source that suit its job.</p>
+
+      <h5>Three modes</h5>
+      <ul>
+        <li><b>AutoMobile:</b> an automotive engineering assistant. It looks up answers in a curated knowledge base of automotive Q&amp;A pairs (retrieval-augmented generation) before it replies.</li>
+        <li><b>Programming:</b> a coding assistant for writing, explaining and debugging code.</li>
+        <li><b>General:</b> an assistant for science, maths, history, technology and everyday questions. It searches the web and lists its sources under each answer, so you can check the facts.</li>
+      </ul>
+
+      <h5>What it can do</h5>
+      <ul>
+        <li>Stream answers word by word as they are written</li>
+        <li>Save every conversation and keep a separate memory for each chat</li>
+        <li>Read attached PDFs, text files and code files, then answer questions about them</li>
+        <li>Let you choose answer length, switch web search on or off, and use light or dark theme</li>
+      </ul>
+
+      <h5>Built with</h5>
+      <p>Python and FastAPI on the server, Ollama for the language models, ChromaDB with sentence-transformers for retrieval, SQLite for chat storage, and a custom HTML, CSS and JavaScript interface with no framework.</p>
+
+      <h5>Privacy</h5>
+      <p>The AI models run entirely on your machine, and your chats and files are stored locally. The only data that leaves your computer is the short search query sent to the web when General mode searches.</p>
+
+      <h5>Good to know</h5>
+      <p class="note">Syntrix runs on a standard computer without a graphics card, so answers can take a little time, especially in General mode. Like any AI, it can make mistakes, so check important facts against the sources it lists.</p>
+
+      <div class="credit">Created by Prince</div>
+    </div>
+  </aside>
+
   <div class="bar">
     <div class="attach" id="attach"></div>
     <div class="field">
@@ -396,7 +447,6 @@ function setMode(m){
 }
 document.querySelectorAll('.tab').forEach(b => b.onclick = () => setMode(b.dataset.mode));
 document.querySelectorAll('.card').forEach(b => b.onclick = () => { setMode(b.dataset.mode); input.focus(); });
-document.querySelectorAll('[data-soon]').forEach(b => b.onclick = () => toast(b.dataset.soon + ' is coming soon.'));
 
 /* ---- Settings (saved in this browser) ---- */
 const SKEY = 'syntrix-settings';
@@ -444,16 +494,22 @@ $('#clearAll').onclick = async () => {
   } catch (e) { toast('Could not clear the chats.'); }
 };
 
-/* ---- Settings panel open / close ---- */
-const settingsPanel = $('#settings');
+/* ---- Settings + About panels (only one open at a time) ---- */
+const settingsPanel = $('#settings'), aboutPanel = $('#about');
 const settingsOpen = () => settingsPanel.classList.contains('open');
+const aboutOpen = () => aboutPanel.classList.contains('open');
 function closeSettings(){ settingsPanel.classList.remove('open'); settingsPanel.setAttribute('aria-hidden', 'true'); }
-function openSettings(){ settingsPanel.classList.add('open'); settingsPanel.setAttribute('aria-hidden', 'false'); }
+function closeAbout(){ aboutPanel.classList.remove('open'); aboutPanel.setAttribute('aria-hidden', 'true'); }
+function openSettings(){ closeAbout(); settingsPanel.classList.add('open'); settingsPanel.setAttribute('aria-hidden', 'false'); }
+function openAbout(){ closeSettings(); aboutPanel.classList.add('open'); aboutPanel.setAttribute('aria-hidden', 'false'); }
 $('#setBtn').onclick = () => settingsOpen() ? closeSettings() : openSettings();
+$('#aboutBtn').onclick = () => aboutOpen() ? closeAbout() : openAbout();
 $('#setClose').onclick = closeSettings;
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSettings(); });
+$('#aboutClose').onclick = closeAbout;
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeSettings(); closeAbout(); } });
 document.addEventListener('click', e => {
   if (settingsOpen() && !settingsPanel.contains(e.target) && !$('#setBtn').contains(e.target)) closeSettings();
+  if (aboutOpen() && !aboutPanel.contains(e.target) && !$('#aboutBtn').contains(e.target)) closeAbout();
 });
 
 /* ---- Sidebar open / close (remembers your choice) ---- */
