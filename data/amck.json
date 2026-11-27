@@ -370,5 +370,173 @@
   {
     "question": "What is a cylinder leak-down test?",
     "answer": "A leak-down test measures how much air escapes from a cylinder when pressurized. It's more precise than a compression test for locating the source of a leak. Bring the cylinder to TDC, pressurize, and measure the percentage lost. Less than 10% is healthy."
+  },
+  {
+    "question": "What is a torque converter and how does it work?",
+    "answer": "A torque converter is a fluid coupling between the engine and an automatic transmission. An impeller spun by the engine flings fluid onto a turbine connected to the transmission, so power passes through fluid instead of a mechanical clutch. This lets the engine idle while the car is stopped in gear and multiplies torque when pulling away. At cruising speed a lockup clutch inside the converter locks it solid to stop slippage and save fuel."
+  },
+  {
+    "question": "What causes torque converter shudder?",
+    "answer": "Torque converter shudder feels like driving over a rumble strip at light throttle, often around 30-50 mph, when the lockup clutch engages. Common causes: degraded or contaminated transmission fluid, a worn lockup clutch, or a failing converter. A fluid change with the correct fluid sometimes cures early cases. If it persists, the converter may need replacement."
+  },
+  {
+    "question": "What are the symptoms of a slipping automatic transmission?",
+    "answer": "Signs: engine RPM rises but the car does not accelerate to match, delayed or soft engagement, shifts where RPM flares between gears, a burnt smell, and a transmission warning light. Causes: low or burnt fluid, worn clutch packs or bands, failing solenoids, or a bad torque converter. Check fluid level and condition first. Driving on while it slips overheats the unit and can turn a repair into a rebuild."
+  },
+  {
+    "question": "What causes harsh or hard shifting in an automatic transmission?",
+    "answer": "Causes: low or old fluid, a clogged filter, sticking valve body or shift solenoids, a faulty speed sensor, worn engine or transmission mounts that exaggerate the feel, or learned shift settings being off after a battery disconnect or fluid change. Check fluid first, then scan for transmission codes. Many cars relearn their shift points over a few days of normal driving."
+  },
+  {
+    "question": "Why is there a delay when I shift into Drive or Reverse?",
+    "answer": "A delay of more than a second or two before the car engages usually points to low fluid pressure. Causes: low fluid, worn clutch seals, a clogged filter, a weak pump, or a faulty solenoid or valve body. Check the fluid level and color first. A harsh slam after the delay suggests internal wear. Have it checked soon, because delayed engagement tends to get worse."
+  },
+  {
+    "question": "Should I drain and refill or flush transmission fluid?",
+    "answer": "A drain and refill (with a new filter where fitted) is the standard service, but it only replaces part of the fluid because some stays in the torque converter and cooler lines. A machine flush replaces more, but some shops avoid it on very high-mileage transmissions that were never serviced. Many sealed lifetime-fill transmissions still benefit from service at around 60,000-100,000 miles. Use exactly the fluid your manual specifies, and ask a trusted shop about a neglected unit."
+  },
+  {
+    "question": "Can I mix different types of transmission fluid?",
+    "answer": "No. Fluids such as Dexron, Mercon, ATF+4, Toyota WS, and dedicated CVT or dual-clutch fluids have different friction properties and additives. The wrong fluid can cause slipping, shudder, or damage, especially in CVTs and dual-clutch units. Use the fluid named in the owner's manual or on the dipstick or fill cap. A universal fluid is only suitable if its label lists your exact specification."
+  },
+  {
+    "question": "What causes an automatic transmission to overheat?",
+    "answer": "Heat is the main killer of automatic transmissions. Causes: low or degraded fluid, towing or hauling heavy loads, stop-and-go driving in hot weather, a clogged or missing transmission cooler, slipping clutches, and a failing torque converter. Symptoms: burnt-smelling fluid, a temperature warning, or limp mode. Prevention: correct fluid level, regular fluid changes, and an auxiliary transmission cooler if you tow."
+  },
+  {
+    "question": "How does a dual-clutch transmission (DCT) work?",
+    "answer": "A DCT has two clutches: one drives the odd gears (1, 3, 5) and the other the even gears (2, 4, 6). While you drive in one gear, the next gear is already pre-selected on the other clutch, so shifts take milliseconds with almost no break in power. Benefits: fast shifts and good efficiency. Downsides: hesitation or judder in slow traffic and costly repairs. Wet-clutch types need regular fluid service; dry-clutch types wear like a manual clutch in stop-and-go driving."
+  },
+  {
+    "question": "What is transmission limp mode?",
+    "answer": "Limp mode is a fail-safe in which the transmission control module locks the car into one gear, often second or third, and may limit power so you can reach a repair shop without destroying the unit. It is triggered by overheating, a faulty sensor or solenoid, low fluid pressure, or electrical faults. Scan for codes. Turning the car off for a few minutes sometimes resets it, but the underlying cause still has to be found."
+  },
+  {
+    "question": "What does a P0700 code mean?",
+    "answer": "P0700 means the transmission control module has stored a fault and asked for the check engine light. It is a general code: the real fault is in a separate transmission code (often in the P07xx range) that must be read with a scanner able to access the transmission module. Typical causes behind it: shift solenoids, speed sensors, or fluid pressure problems. Read the other codes before clearing anything."
+  },
+  {
+    "question": "Why does a manual transmission grind when shifting?",
+    "answer": "Grinding means the gear is being forced to engage before the shaft speeds match. Causes: a clutch that is not fully disengaging (worn clutch, air in the hydraulic line, a failing master or slave cylinder, or a bad release mechanism), worn synchronizers, or low or wrong gear oil. If it grinds in every gear, suspect the clutch. If it grinds in only one gear, suspect that gear's synchronizer. Check the clutch fluid and pedal feel first."
+  },
+  {
+    "question": "Why does my clutch pedal stay on the floor or feel soft?",
+    "answer": "A pedal that sticks to the floor or feels soft is usually a hydraulic problem: a leaking clutch master or slave cylinder, air in the line, or low fluid (many cars share the brake fluid reservoir). Check the fluid level and look for leaks near the pedal and around the bell housing. Bleed the system after repair. On a cable clutch, a limp pedal usually means a stretched or broken cable."
+  },
+  {
+    "question": "Is it bad to shift into Park while the car is still moving?",
+    "answer": "Yes. The park pawl is a small metal pin that locks the transmission output shaft, and engaging it while rolling can break it and damage the transmission. Always come to a complete stop before selecting Park. On a slope, apply the parking brake and let the car settle on it before shifting into Park, so the brake carries the weight instead of the pawl."
+  },
+  {
+    "question": "Why do my brakes squeal?",
+    "answer": "Common causes: brake pad wear indicators (a small metal tab that squeals when the pads are thin), glazed pads or rotors, missing anti-squeal shims or lubricant at the contact points, dust or debris between pad and rotor, and hard budget pad compounds. A light squeal on damp mornings that fades quickly is usually just surface moisture. A constant squeal means inspect the pads now. Cleaning and applying high-temperature brake grease to the caliper slide pins and pad contact points often cures it."
+  },
+  {
+    "question": "What does grinding when braking mean?",
+    "answer": "A harsh metal-on-metal grinding usually means the pads have worn down to the backing plate and steel is scraping the rotor. Stop driving soon: rotors get scored quickly and stopping distance suffers. It can also be a stone caught behind the dust shield or a seized caliper. Replace the pads, usually the rotors as well, and check the calipers."
+  },
+  {
+    "question": "How thin can brake pads get before I replace them?",
+    "answer": "New pads typically have around 10-12 mm of friction material. Most shops recommend replacement at about 3 mm (1/8 inch) or less, and the wear indicator usually starts squealing near that point. Check through the wheel spokes or with the wheel off. Always replace pads on both wheels of an axle together."
+  },
+  {
+    "question": "When should brake rotors be replaced or resurfaced?",
+    "answer": "Every rotor has a minimum thickness (marked MIN TH or discard thickness) stamped on it. If it measures below that, replace it. If it is above the minimum and only lightly scored or uneven, it can be machined (resurfaced), but modern thin rotors are often cheaper to replace. Deep grooves, cracks, blue heat spots, or a pronounced lip at the edge mean replacement."
+  },
+  {
+    "question": "How often should brake fluid be changed?",
+    "answer": "Most manufacturers recommend every 2 to 3 years regardless of mileage. Glycol-based brake fluid (DOT 3, 4, 5.1) absorbs moisture from the air over time, which lowers its boiling point and causes internal corrosion. Boiling fluid forms vapor bubbles and gives a spongy pedal or brake fade. Test strips or a boiling-point tester can check it, and the owner's manual gives the correct DOT type."
+  },
+  {
+    "question": "What are the symptoms of a failing brake booster?",
+    "answer": "A bad brake booster makes the pedal very hard to press, increases stopping effort and distance, and may cause a hissing sound when you press the pedal. If the diaphragm leaks vacuum, the engine may also idle rough or stall when braking. Test: with the engine off, pump the pedal several times until it is firm, hold it down, then start the engine. The pedal should sink slightly. If it does not move, the booster is not helping."
+  },
+  {
+    "question": "Why does my brake pedal slowly sink to the floor?",
+    "answer": "A pedal that sinks under steady pressure usually means a failing brake master cylinder, whose internal seals let fluid bypass. Another cause is a leak in a line, hose, or caliper, though that usually also lowers the fluid level. Check the reservoir level and look for wet spots at each wheel. This is a serious safety problem; do not drive the car until it is fixed."
+  },
+  {
+    "question": "What are the signs of a stuck brake caliper?",
+    "answer": "Signs: the car pulls to one side, one wheel is much hotter than the others after driving, a burning smell or smoke, uneven pad wear, poor fuel economy, and a dragging feel. Causes: seized caliper pistons, rusted or dry slide pins, or a collapsed brake hose that traps pressure. Fix: clean and lubricate the slide pins, or replace the caliper (and the hose if it is suspect)."
+  },
+  {
+    "question": "Is it normal for the brake pedal to pulse when ABS activates?",
+    "answer": "Yes. When the ABS works on slippery surfaces or in a hard stop, you feel the pedal pulse and may hear buzzing or grinding. That means the system is preventing wheel lock, so keep firm pressure on the pedal and steer. A pulsing pedal during ordinary dry braking is different: it usually points to warped rotors or uneven rotor thickness."
+  },
+  {
+    "question": "What causes the ABS warning light to come on?",
+    "answer": "Common causes: a faulty wheel speed sensor or damaged sensor wiring, a dirty or damaged tone ring, low brake fluid, a blown ABS fuse, or a failing ABS pump or module. With the ABS light on, the normal brakes usually still work, but ABS and often traction control are disabled. Read the codes with a scanner that supports ABS, because a basic OBD-II reader may not see them."
+  },
+  {
+    "question": "What does the red brake warning light mean?",
+    "answer": "First make sure the parking brake is fully released. If the light stays on, the brake fluid level may be low or the hydraulic system may have lost pressure in one circuit. Low fluid often means worn pads or a leak. A red brake light together with a soft or sinking pedal is an emergency: stop driving and have the car towed. This light is different from the amber ABS light."
+  },
+  {
+    "question": "How does an electronic parking brake affect rear brake pad replacement?",
+    "answer": "Many cars use an electric motor on the rear caliper or a motor-driven cable to apply the parking brake. Replacing rear pads on these cars requires putting the brake into service mode with a scan tool or a specific button sequence so the piston retracts. Forcing the piston back by hand can destroy the motor. Always follow the service procedure for your model."
+  },
+  {
+    "question": "What is the difference between ceramic, semi-metallic and organic brake pads?",
+    "answer": "Ceramic pads are quiet, make little dust, and are gentle on rotors, but cost more and can bite less when very cold or under track-level heat. Semi-metallic pads handle heat and heavy use well and have strong bite, but are noisier, dustier, and wear rotors faster. Organic (NAO) pads are soft and quiet but wear quickly. For normal street driving, a quality ceramic pad is a common choice."
+  },
+  {
+    "question": "What is brake fade and what causes it?",
+    "answer": "Brake fade is a loss of stopping power after repeated hard braking as heat builds up. Pad fade happens when the pad material overheats and loses grip. Fluid fade happens when brake fluid boils, giving a soft pedal. Prevent it with fresh fluid, pads suited to your driving, good airflow to the brakes, and engine braking (a lower gear) on long descents. If fade starts, slow down and let the brakes cool."
+  },
+  {
+    "question": "What are the symptoms of a bad CV axle?",
+    "answer": "A clicking or popping noise when turning at low speed is the classic sign of a worn outer CV joint. Other signs: grease thrown around the inside of the wheel from a torn CV boot, vibration while accelerating (often an inner joint), and a clunk when starting off. Replace the axle or joint once the joint is worn. A torn boot caught early may be repaired before the joint is damaged."
+  },
+  {
+    "question": "What is the difference between a CV joint and a U-joint?",
+    "answer": "A U-joint (universal joint) is a cross-shaped joint used on the driveshafts of rear-wheel-drive and 4WD vehicles. It works at an angle but causes speed variation if the angle is large. A CV (constant velocity) joint is used on front-wheel-drive axles and independent suspension, and transmits power smoothly at larger angles, including while steering. Worn U-joints cause clunks and vibration; worn CV joints cause clicking in turns."
+  },
+  {
+    "question": "What causes driveshaft vibration?",
+    "answer": "Causes: worn U-joints, a bent or unbalanced driveshaft, a lost balance weight, a worn center support bearing on two-piece shafts, or wrong driveline angles after a lift or suspension change. The vibration often appears in a certain speed range. A clunk when shifting between Drive and Reverse or when going on and off the throttle points to worn U-joints or slack in the differential."
+  },
+  {
+    "question": "How often should differential fluid be changed?",
+    "answer": "Check the owner's manual. Many vehicles call for differential (gear oil) service somewhere between 30,000 and 60,000 miles, and sooner for towing or off-road use. Use the exact gear oil grade specified (for example 75W-90), and add the friction modifier if the differential is limited-slip. Signs of trouble: whining that changes with speed, metal flakes on the drain plug magnet, and leaks at the axle or pinion seals."
+  },
+  {
+    "question": "What is the difference between open, limited-slip and locking differentials?",
+    "answer": "An open differential splits torque equally, but when one wheel loses grip it spins and the other gets almost nothing. A limited-slip differential (LSD) uses clutches, gears, or a viscous unit to send more torque to the wheel with grip. A locking differential mechanically ties both wheels together for maximum traction, mainly off-road. Open differentials are common in everyday cars, LSDs in performance cars, and lockers in off-road trucks."
+  },
+  {
+    "question": "What does a transfer case do?",
+    "answer": "The transfer case on 4WD vehicles splits power from the transmission between the front and rear axles, and many have a low range for crawling and towing. Problems: whining or grinding, trouble shifting between 2WD and 4WD, leaks, and drivetrain binding if part-time 4WD is used on dry pavement. Change the transfer case fluid at the interval in the manual, because it is often overlooked."
+  },
+  {
+    "question": "What are the symptoms of a bad wheel bearing?",
+    "answer": "The typical sign is a humming or growling noise that gets louder with vehicle speed and often changes when you turn or load the bad side. Other signs: play when you rock the wheel by hand, vibration through the steering wheel or floor, uneven tire wear, and sometimes an ABS warning light. Replace it promptly, because a failed bearing can seize or let the wheel come loose."
+  },
+  {
+    "question": "How can I tell wheel bearing noise from tire noise?",
+    "answer": "Tire noise usually changes with the road surface and can move when tires are rotated. Wheel bearing noise stays the same on every surface, grows with speed, and often changes when you swerve gently left and right as the load shifts. To confirm, lift the wheel and spin it by hand, listening for roughness, and check for play by rocking it at the 12 and 6 o'clock positions."
+  },
+  {
+    "question": "What are the differences between FWD, RWD and AWD?",
+    "answer": "FWD puts the engine weight over the driven wheels, giving good traction in rain and snow and efficient packaging, but it can understeer and show torque steer. RWD splits driving and steering between the axles, giving better balance and handling and better traction when accelerating hard or towing, but less grip in slippery conditions. AWD drives all four wheels for the best traction, at the cost of extra weight, complexity, and fuel use."
+  },
+  {
+    "question": "What is torque steer?",
+    "answer": "Torque steer is a pull of the steering wheel to one side under hard acceleration, common in powerful front-wheel-drive cars. It comes from unequal-length driveshafts, uneven torque reaching each wheel, or worn suspension bushings. Makers reduce it with equal-length axles, intermediate shafts, and limited-slip differentials. Worn engine mounts or unequal tire pressures can make it worse."
+  },
+  {
+    "question": "Can mismatched tires damage an AWD vehicle?",
+    "answer": "Yes. AWD systems expect all four tires to rotate at nearly the same speed. A tire with a different diameter, from uneven wear or mixed sizes, forces the center differential, transfer case, or clutch pack to slip constantly, causing heat and early wear. Replace all four tires together when possible, keep tread depth within the limit in your manual, and rotate tires regularly."
+  },
+  {
+    "question": "How does an on-demand AWD clutch coupling work?",
+    "answer": "Many on-demand AWD cars drive the front wheels normally and use an electronically controlled multi-plate clutch coupling to send torque to the rear when slip is detected. These couplings, such as Haldex-type units, have their own fluid and filter that need servicing at the maker's interval. Signs of trouble: no rear drive, clunking or binding in tight turns, or an AWD warning light."
+  },
+  {
+    "question": "What are the symptoms of a bad engine or transmission mount?",
+    "answer": "Symptoms: a clunk when shifting between Drive and Reverse or on hard acceleration, extra vibration at idle felt in the cabin, and the engine rocking more than normal. Worn mounts let the powertrain move, which strains hoses, exhaust, and wiring. Have someone shift gears while you watch the engine, and inspect the rubber for cracks or oil soaking. Replace mounts as a set when practical."
+  },
+  {
+    "question": "What is a final drive ratio and how does it affect performance?",
+    "answer": "The final drive (axle) ratio is the last gear reduction between the transmission and the wheels. A 3.73:1 ratio means the driveshaft turns 3.73 times for each wheel turn. A higher numerical ratio gives stronger acceleration and towing but higher engine RPM and worse fuel economy at highway speed. A lower number is more relaxed for cruising. Changing tire size changes the effective ratio and the speedometer reading."
   }
 ]
