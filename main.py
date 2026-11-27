@@ -257,7 +257,7 @@ def get_file(chat_id: str):
     return (row["name"], row["text"]) if row else None
 
 init_db()
-print("Syntrix settings build v13 loaded")
+print("Syntrix rename build v14 loaded")
 
 # --- Reading uploaded files ---
 def extract_text(name: str, data: bytes):
@@ -510,6 +510,21 @@ def delete_chat(chat_id: str):
         conn.execute("DELETE FROM files WHERE chat_id = ?", (chat_id,))
         conn.execute("DELETE FROM chats WHERE id = ?", (chat_id,))
     return {"status": "deleted"}
+
+class RenameIn(BaseModel):
+    title: str
+
+@app.patch("/api/chats/{chat_id}")
+def rename_chat(chat_id: str, body: RenameIn):
+    """Sidebar > pencil icon: gives a chat a new name."""
+    title = " ".join(body.title.split())[:60]
+    if not title:
+        raise HTTPException(status_code=400, detail="The name cannot be empty.")
+    with closing(db()) as conn, conn:
+        cur = conn.execute("UPDATE chats SET title = ? WHERE id = ?", (title, chat_id))
+        if cur.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Chat not found")
+    return {"id": chat_id, "title": title}
 
 @app.delete("/api/chats")
 def delete_all_chats():
