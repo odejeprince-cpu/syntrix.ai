@@ -29,22 +29,39 @@ button:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid va
 .i{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
 
 /* Sidebar */
-.side{width:250px;flex:none;margin:0;padding:26px 16px 18px;display:flex;flex-direction:column;
+.side{width:250px;flex:none;margin:0;padding:22px 16px 16px;display:flex;flex-direction:column;
   background:linear-gradient(180deg,var(--panel),rgba(8,12,36,.5));border-right:1px solid var(--line);
   border-radius:0 28px 28px 0;position:relative;z-index:3}
-.brand{text-align:center;padding-bottom:22px}
-.brand img{width:76px;height:auto;display:block;margin:0 auto}
-.brand h1{font-size:30px;font-weight:700;letter-spacing:-.5px;margin-top:4px}
+.brand{text-align:center;padding-bottom:14px}
+.brand img{width:70px;height:auto;display:block;margin:0 auto}
+.brand h1{font-size:28px;font-weight:700;letter-spacing:-.5px;margin-top:4px}
 .brand h1 span,.hero h2 span{color:#8b5cff}
 .brand p{font-size:12px;color:var(--muted);margin-top:4px}
-.nav{display:flex;flex-direction:column;gap:6px;margin-top:10px}
-.nav button{display:flex;align-items:center;gap:16px;padding:14px 20px;border-radius:14px;font-size:15px;color:var(--muted);text-align:left;transition:background .2s,color .2s}
+.nav{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.nav button{display:flex;align-items:center;gap:16px;padding:13px 20px;border-radius:14px;font-size:15px;color:var(--muted);text-align:left;transition:background .2s,color .2s}
 .nav button:hover{background:var(--panel2);color:var(--text)}
-.nav button.primary{background:linear-gradient(90deg,#2f6bff,#7c4dff);color:#fff;font-weight:500;box-shadow:0 8px 24px rgba(80,80,255,.35);margin-bottom:8px}
-.powered{margin-top:auto;border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center;background:var(--panel2)}
+.nav button.primary{background:linear-gradient(90deg,#2f6bff,#7c4dff);color:#fff;font-weight:500;box-shadow:0 8px 24px rgba(80,80,255,.35)}
+.nav.bottom{margin-top:8px;margin-bottom:12px;gap:2px}
+.powered{border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center;background:var(--panel2)}
 .powered b{display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:500}
 .powered b .i{width:18px;height:18px;color:#8b5cff}
 .powered small{display:block;margin-top:6px;font-size:11.5px;color:var(--muted)}
+
+/* Chat list inside the sidebar */
+.chats-label{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:16px 12px 6px}
+.chats{flex:1;min-height:0;overflow-y:auto;list-style:none;display:flex;flex-direction:column;gap:3px;margin:0 -6px;padding:0 6px;scrollbar-width:thin}
+.chats li{display:flex;align-items:center;border-radius:12px;border:1px solid transparent}
+.chats li:hover{background:rgba(255,255,255,.07)}
+.chats li.on{background:rgba(90,140,255,.18);border-color:rgba(130,170,255,.45)}
+.chats .open-chat{flex:1;min-width:0;text-align:left;padding:8px 10px}
+.chats .t{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chats .s{display:block;font-size:11.5px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chats .del{padding:7px;margin-right:4px;color:var(--muted);border-radius:9px;opacity:.55;flex:none}
+.chats li:hover .del{opacity:1}
+.chats .del:hover{color:#ff7a8a;background:rgba(255,90,110,.12)}
+.chats .del .i{width:16px;height:16px}
+.chats .empty{padding:10px 12px;color:var(--muted);font-size:13px;line-height:1.5}
+[data-theme="light"] .chats li:hover{background:rgba(70,90,190,.08)}
 
 /* Main */
 .main{flex:1;min-width:0;position:relative;display:flex;flex-direction:column;height:100%}
@@ -181,29 +198,16 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 30px rgba(60,80,160,.18)}
 [data-theme="light"] .card{background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(235,240,255,.55))}
 
-/* ---- History + Settings panels (same frosted look) ---- */
-.hist,.settings{position:absolute;left:14px;top:96px;width:330px;z-index:7;display:flex;flex-direction:column;border-radius:22px;padding:16px 12px 12px;
+/* ---- Settings panel (frosted) ---- */
+.settings{position:absolute;left:14px;top:96px;width:330px;max-height:calc(100% - 130px);overflow-y:auto;z-index:7;display:flex;flex-direction:column;border-radius:22px;padding:16px 12px 12px;
   background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.04)),rgba(10,14,40,.85);
   -webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%);
   border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 20px 50px rgba(0,0,0,.5);
   transform:translateX(-12px);opacity:0;visibility:hidden;transition:transform .22s,opacity .22s,visibility .22s}
-.hist{bottom:100px}
-.settings{max-height:calc(100% - 130px);overflow-y:auto}
-.hist.open,.settings.open{transform:none;opacity:1;visibility:visible}
-.hist header,.settings header{display:flex;align-items:center;justify-content:space-between;padding:0 8px 10px;font-weight:600;font-size:16px}
-.hist header button,.settings header button{color:var(--muted);padding:4px;border-radius:8px}
-.hist ul{list-style:none;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
-.hist li{display:flex;align-items:center;gap:4px;border-radius:14px;border:1px solid transparent}
-.hist li:hover{background:rgba(255,255,255,.07)}
-.hist li.on{background:rgba(90,140,255,.18);border-color:rgba(130,170,255,.45)}
-.hist .open-chat{flex:1;min-width:0;text-align:left;padding:10px 12px}
-.hist .t{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hist .s{display:block;font-size:12px;color:var(--muted);margin-top:2px}
-.hist .del{padding:8px;margin-right:4px;color:var(--muted);border-radius:10px}
-.hist .del:hover{color:#ff7a8a;background:rgba(255,90,110,.12)}
-.hist .del .i{width:18px;height:18px}
-.hist .empty{padding:18px 12px;color:var(--muted);font-size:14px;line-height:1.5}
-[data-theme="light"] .hist,[data-theme="light"] .settings{background:rgba(255,255,255,.92)}
+.settings.open{transform:none;opacity:1;visibility:visible}
+.settings header{display:flex;align-items:center;justify-content:space-between;padding:0 8px 10px;font-weight:600;font-size:16px}
+.settings header button{color:var(--muted);padding:4px;border-radius:8px}
+[data-theme="light"] .settings{background:rgba(255,255,255,.92)}
 
 /* ---- Settings contents ---- */
 .set-row{padding:14px 8px;border-top:1px solid var(--line)}
@@ -248,8 +252,6 @@ body.side-closed .side{margin-left:-250px;opacity:0;visibility:hidden;pointer-ev
     <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3aa0ff"/><stop offset=".55" stop-color="#6a4dff"/><stop offset="1" stop-color="#9b5cff"/></linearGradient>
     <symbol id="logo" viewBox="0 0 74 70"><path d="M22 4h46l-14 18H12z" fill="url(#lg)"/><path d="M12 22h34l-10 12H2z" fill="url(#lg)" opacity=".85"/><path d="M52 36h20L58 48H38z" fill="url(#lg)" opacity=".85"/><path d="M6 48h52l-14 18H-8z" fill="url(#lg)"/></symbol>
     <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/></symbol>
-    <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5M12 7v5l3 2"/></symbol>
-    <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></symbol>
     <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1"/></symbol>
     <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.4v.4"/></symbol>
     <symbol id="i-car" viewBox="0 0 24 24"><path d="M3 16v-3.5L5.2 7h13.6L21 12.5V16zM3 16h18M6.5 19v-3M17.5 19v-3"/><circle cx="7.5" cy="13.2" r=".7"/><circle cx="16.5" cy="13.2" r=".7"/></symbol>
@@ -258,7 +260,6 @@ body.side-closed .side{margin-left:-250px;opacity:0;visibility:hidden;pointer-ev
     <symbol id="i-clip" viewBox="0 0 24 24"><path d="M20 11l-8 8a5 5 0 0 1-7-7l8-8a3.3 3.3 0 0 1 5 5l-8 8a1.7 1.7 0 0 1-2.4-2.4l7-7"/></symbol>
     <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3L3 10.5l7 3 3 7z"/></symbol>
     <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
-    <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11z"/></symbol>
     <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
     <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></symbol>
     <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z" fill="currentColor"/></symbol>
@@ -273,10 +274,15 @@ body.side-closed .side{margin-left:-250px;opacity:0;visibility:hidden;pointer-ev
     <h1>Syntrix <span>AI</span></h1>
     <p>Smarter. Deeper. Always Here.</p>
   </div>
+
   <nav class="nav">
     <button class="primary" id="newChat"><svg class="i"><use href="#i-chat"/></svg>New Chat</button>
-    <button id="histBtn"><svg class="i"><use href="#i-history"/></svg>History</button>
-    <button data-soon="Saved Chats"><svg class="i"><use href="#i-bookmark"/></svg>Saved Chats</button>
+  </nav>
+
+  <div class="chats-label">Your chats</div>
+  <ul class="chats" id="chatList" aria-label="Your chats"></ul>
+
+  <nav class="nav bottom">
     <button id="setBtn"><svg class="i"><use href="#i-gear"/></svg>Settings</button>
     <button data-soon="About"><svg class="i"><use href="#i-info"/></svg>About</button>
   </nav>
@@ -317,11 +323,6 @@ body.side-closed .side{margin-left:-250px;opacity:0;visibility:hidden;pointer-ev
   </section>
 
   <section class="msgs" id="msgs"><div class="wrap" id="wrap"></div></section>
-
-  <aside class="hist" id="hist" aria-label="Chat history" aria-hidden="true">
-    <header>History<button id="histClose" aria-label="Close history"><svg class="i"><use href="#i-x"/></svg></button></header>
-    <ul id="histList"></ul>
-  </aside>
 
   <aside class="settings" id="settings" aria-label="Settings" aria-hidden="true">
     <header>Settings<button id="setClose" aria-label="Close settings"><svg class="i"><use href="#i-x"/></svg></button></header>
@@ -443,6 +444,18 @@ $('#clearAll').onclick = async () => {
   } catch (e) { toast('Could not clear the chats.'); }
 };
 
+/* ---- Settings panel open / close ---- */
+const settingsPanel = $('#settings');
+const settingsOpen = () => settingsPanel.classList.contains('open');
+function closeSettings(){ settingsPanel.classList.remove('open'); settingsPanel.setAttribute('aria-hidden', 'true'); }
+function openSettings(){ settingsPanel.classList.add('open'); settingsPanel.setAttribute('aria-hidden', 'false'); }
+$('#setBtn').onclick = () => settingsOpen() ? closeSettings() : openSettings();
+$('#setClose').onclick = closeSettings;
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSettings(); });
+document.addEventListener('click', e => {
+  if (settingsOpen() && !settingsPanel.contains(e.target) && !$('#setBtn').contains(e.target)) closeSettings();
+});
+
 /* ---- Sidebar open / close (remembers your choice) ---- */
 const sideToggle = $('#sideToggle');
 function setSide(closed){
@@ -536,7 +549,7 @@ async function send(){
     const r = await fetch('/chat/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     if (!r.ok || !r.body) throw new Error('bad response');
     const cid = r.headers.get('X-Chat-Id');
-    if (cid) chatId = cid;
+    if (cid) { const isNew = cid !== chatId; chatId = cid; if (isNew) loadList(); }   // new chat shows in the sidebar right away
     const reader = r.body.getReader();
     const dec = new TextDecoder();
     let full = '';
@@ -553,7 +566,7 @@ async function send(){
     wait.innerHTML = 'Could not reach the Syntrix server. Check that it is running, then try again.';
   }
   busy = false; sendBtn.disabled = false;
-  if (histOpen()) loadList();
+  loadList();
   msgs.scrollTop = msgs.scrollHeight; input.focus();
 }
 sendBtn.onclick = send;
@@ -563,58 +576,38 @@ input.addEventListener('input', () => { input.style.height = '24px'; input.style
 function newChat(){
   chatId = null; wrap.innerHTML = ''; app.classList.remove('chatting');
   clearAttachment();
-  input.value = ''; input.style.height = '24px'; closeHist(); input.focus();
+  input.value = ''; input.style.height = '24px'; loadList(); input.focus();
 }
 $('#newChat').onclick = newChat;
 
-/* ---- History ---- */
-const hist = $('#hist'), histList = $('#histList');
+/* ---- Chat list in the sidebar ---- */
+const chatList = $('#chatList');
 const MODE_NAMES = { auto: 'AutoMobile', code: 'Programming', general: 'General' };
-const histOpen = () => hist.classList.contains('open');
-function closeHist(){ hist.classList.remove('open'); hist.setAttribute('aria-hidden', 'true'); }
-async function openHist(){ closeSettings(); hist.classList.add('open'); hist.setAttribute('aria-hidden', 'false'); await loadList(); }
-$('#histBtn').onclick = () => histOpen() ? closeHist() : openHist();
-$('#histClose').onclick = closeHist;
 
-/* ---- Settings panel open / close ---- */
-const settingsPanel = $('#settings');
-const settingsOpen = () => settingsPanel.classList.contains('open');
-function closeSettings(){ settingsPanel.classList.remove('open'); settingsPanel.setAttribute('aria-hidden', 'true'); }
-function openSettings(){ closeHist(); settingsPanel.classList.add('open'); settingsPanel.setAttribute('aria-hidden', 'false'); }
-$('#setBtn').onclick = () => settingsOpen() ? closeSettings() : openSettings();
-$('#setClose').onclick = closeSettings;
-
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeHist(); closeSettings(); } });
-document.addEventListener('click', e => {
-  if (histOpen() && !hist.contains(e.target) && !$('#histBtn').contains(e.target)) closeHist();
-  if (settingsOpen() && !settingsPanel.contains(e.target) && !$('#setBtn').contains(e.target)) closeSettings();
-});
-
-function fmtDate(iso){
+function fmtShort(iso){
   const d = new Date(iso), now = new Date();
   const days = Math.round((new Date(now.toDateString()) - new Date(d.toDateString())) / 864e5);
-  const time = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  if (days === 0) return 'Today, ' + time;
-  if (days === 1) return 'Yesterday, ' + time;
-  return d.toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' });
+  if (days === 0) return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  if (days === 1) return 'Yesterday';
+  return d.toLocaleDateString([], { day: 'numeric', month: 'short' });
 }
 
 async function loadList(){
   try {
     const chats = await (await fetch('/api/chats')).json();
-    histList.innerHTML = '';
-    if (!chats.length) { histList.innerHTML = '<li class="empty">No chats yet. Start one and it will appear here.</li>'; return; }
+    chatList.innerHTML = '';
+    if (!chats.length) { chatList.innerHTML = '<li class="empty">No chats yet. Start one and it will appear here.</li>'; return; }
     chats.forEach(c => {
       const li = document.createElement('li');
       if (c.id === chatId) li.className = 'on';
       li.innerHTML = '<button class="open-chat"><span class="t"></span><span class="s"></span></button><button class="del" aria-label="Delete chat"><svg class="i"><use href="#i-trash"/></svg></button>';
       li.querySelector('.t').textContent = c.title;
-      li.querySelector('.s').textContent = (MODE_NAMES[c.mode] || c.mode) + ' · ' + fmtDate(c.updated);
+      li.querySelector('.s').textContent = (MODE_NAMES[c.mode] || c.mode) + ' · ' + fmtShort(c.updated);
       li.querySelector('.open-chat').onclick = () => openChat(c.id);
       li.querySelector('.del').onclick = () => removeChat(c);
-      histList.appendChild(li);
+      chatList.appendChild(li);
     });
-  } catch (e) { histList.innerHTML = '<li class="empty">Could not load history.</li>'; }
+  } catch (e) { chatList.innerHTML = '<li class="empty">Could not load your chats.</li>'; }
 }
 
 async function openChat(id){
@@ -626,19 +619,23 @@ async function openChat(id){
     chatId = c.id; wrap.innerHTML = '';
     clearAttachment();
     c.messages.forEach(m => add(m.role === 'user' ? 'u' : 'b', m.role === 'user' ? esc(m.text).replace(/\n/g, '<br>') : render(m.text)));
-    setMode(c.mode); app.classList.add('chatting'); closeHist();
+    setMode(c.mode); app.classList.add('chatting');
     msgs.scrollTop = msgs.scrollHeight;
+    loadList();   // moves the highlight to this chat
   } catch (e) { toast('Could not open that chat.'); }
 }
 
 async function removeChat(c){
+  if (busy) { toast('Wait for the current answer to finish.'); return; }
   if (!confirm('Delete "' + c.title + '"? This cannot be undone.')) return;
   try {
     await fetch('/api/chats/' + c.id, { method: 'DELETE' });
-    if (c.id === chatId) { newChat(); openHist(); } else { loadList(); }
+    if (c.id === chatId) { newChat(); } else { loadList(); }
   } catch (e) { toast('Could not delete that chat.'); }
 }
+
 setMode('auto');
+loadList();
 </script>
 </body>
 </html>
